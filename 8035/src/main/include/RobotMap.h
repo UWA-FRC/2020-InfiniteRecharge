@@ -60,7 +60,7 @@ struct RobotMap {
 
     wml::control::PIDGains gainsFOC{ "Drivetrain FOC", 0.008, 0, 0 };
     wml::control::PIDGains gainsAlign{ "Drivetrain Align", 0.3, 0, 0.04 };
-    wml::PathfinderGains gainsPathfinder{ "Drivetrain Pathfinder", 24.0, 0, 1.5, 0.36, 0.08, 12.0 / 90.0 };    // PIDVAG
+    // wml::PathfinderGains gainsPathfinder{ "Drivetrain Pathfinder", 24.0, 0, 1.5, 0.36, 0.08, 12.0 / 90.0 };    // PIDVAG
 
     wml::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 };
     wml::control::PIDGains gainsVelocity{ "Drivetrain Velocity", 1 };

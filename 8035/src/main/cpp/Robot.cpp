@@ -1,6 +1,6 @@
 #include "Robot.h"
 #include "ControlMap.h"
-#include "strategy/MPStrategy.h"
+// #include "strategy/MPStrategy.h"
 
 #include <math.h>
 #include <iostream>
@@ -183,8 +183,7 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
-void Robot::TeleopPeriodic() {
-}
+void Robot::TeleopPeriodic() {}
 
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}
