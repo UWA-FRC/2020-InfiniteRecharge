@@ -45,8 +45,16 @@ jobs:
     vmImage: 'Ubuntu-16.04'
   container: linux
   steps:
-  - script: sudo apt-get install -y libusb-1.0-0-dev
+  - script: sudo apt-get install -y libusb-1.0-0-dev gcc g++
   - script: git submodule update --init
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      testResultsFiles: '**/TEST-*.xml'
+      tasks: ':8035:build'
   - task: Gradle@2
     inputs:
       workingDirectory: ''
@@ -88,42 +96,3 @@ jobs:
       testResultsFiles: '**/TEST-*.xml'
       tasks: 'clean :vision:build'
       options: '-Pno-roborio -Pno-desktop -xcheck'
-
-- job: tinkerboard_vision
-  pool:
-    vmImage: 'Ubuntu-16.04'
-  container: linux
-  steps:
-  - script: git submodule update --init
-  - task: Gradle@2
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      tasks: ':vision:installTinkerboardToolchain'
-      options: '-Pno-roborio -Pno-desktop --scan --stacktrace'
-  - task: Gradle@2
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      publishJUnitResults: false
-      testResultsFiles: '**/TEST-*.xml'
-      tasks: 'clean :vision:build'
-      options: '-Pno-roborio -Pno-desktop -xcheck'
-
-- job: doxygen
-  pool:
-    vmImage: 'Ubuntu-16.04'
-  container: linux
-  steps:
-  - script: git submodule update --init
-  - task: Gradle@2
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      tasks: 'doxygen'
-      options: '-Pno-roborio'
-  - task: PublishBuildArtifacts@1
-    inputs:
-      artifactName: 'doxygen'
-      pathtoPublish: build/docs/doxygen/html
