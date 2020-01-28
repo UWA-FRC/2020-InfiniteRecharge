@@ -54,7 +54,7 @@ jobs:
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
-      tasks: ':8035:build'
+      tasks: 'installRoboRioToolchain'
   - task: Gradle@2
     inputs:
       workingDirectory: ''
@@ -62,8 +62,7 @@ jobs:
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
-      tasks: 'clean build'
-      options: '-Pno-roborio'
+      tasks: ':8035:build'
 
 - job: roborio
   pool: 
