@@ -22,7 +22,6 @@ jobs:
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
       tasks: 'clean :8035:build'
-      options: '-Pno-roborio'
 
 - job: macOS
   pool:
@@ -38,7 +37,6 @@ jobs:
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
       tasks: 'clean :8035:build'
-      options: '-Pno-roborio'
 
 - job: linux
   pool: 
@@ -63,7 +61,6 @@ jobs:
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
       tasks: 'clean :8035:build'
-      options: '-Pno-roborio'
 
 - job: roborio
   pool: 
@@ -79,7 +76,6 @@ jobs:
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
       tasks: 'clean :8035:build'
-      options: '-Pno-desktop -xcheck'
 
 - job: pi_vision
   pool: 
@@ -95,4 +91,3 @@ jobs:
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
       tasks: 'clean :8035:build'
-      options: '-Pno-roborio -Pno-desktop -xcheck'
