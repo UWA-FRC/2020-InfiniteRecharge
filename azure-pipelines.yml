@@ -21,7 +21,7 @@ jobs:
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
-      tasks: 'clean build'
+      tasks: 'clean :8035:build'
       options: '-Pno-roborio'
 
 - job: macOS
@@ -37,7 +37,7 @@ jobs:
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
-      tasks: 'clean build'
+      tasks: 'clean :8035:build'
       options: '-Pno-roborio'
 
 - job: linux
@@ -62,7 +62,8 @@ jobs:
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
-      tasks: ':8035:build'
+      tasks: 'clean :8035:build'
+      options: '-Pno-roborio'
 
 - job: roborio
   pool: 
@@ -77,8 +78,8 @@ jobs:
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
-      tasks: 'clean build'
-      options: '-Pno-desktop -xcheck -x:vision:build'
+      tasks: 'clean :8035:build'
+      options: '-Pno-desktop -xcheck'
 
 - job: pi_vision
   pool: 
@@ -93,5 +94,5 @@ jobs:
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
-      tasks: 'clean :vision:build'
+      tasks: 'clean :8035:build'
       options: '-Pno-roborio -Pno-desktop -xcheck'
