@@ -20,28 +20,21 @@ void Robot::RobotInit() {
   camera.SetResolution(160, 120);
 
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
+  drivetrain->GetConfig().leftDrive.transmission->SetInverted(true);
 
-  StrategyController::Register(drivetrain);
-  NTProvider::Register(drivetrain);
+  // StrategyController::Register(drivetrain);
+  // NTProvider::Register(drivetrain);
 }
+
+using state = actuators::BinaryActuatorState;
 
 void Robot::RobotPeriodic() {
   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
-  robotmap.contGroup.Update(); // update selectors, etc. [OPTIONAL]
-
-  // Redundant, as it can already be accessed on shuffleboard via nt, but ~
-  // frc::SmartDashboard::PutNumber("Hatch Distance", robotmap.controlSystem.hatchDistanceEntry.GetDouble(-1));
-  // frc::SmartDashboard::PutNumber("Hatch X Offset", robotmap.controlSystem.hatchXoffsetEntry.GetDouble(0));
-  // frc::SmartDashboard::PutNumber("Hatch Y Offset", robotmap.controlSystem.hatchYoffsetEntry.GetDouble(0));
-  
-  // frc::SmartDashboard::PutNumber("Tape Distance", robotmap.controlSystem.tapeDistanceEntry.GetDouble(-1));
-  // frc::SmartDashboard::PutNumber("Tape Angle", robotmap.controlSystem.tapeAngleEntry.GetDouble(0));
-  // frc::SmartDashboard::PutNumber("Tape Target", robotmap.controlSystem.tapeTargetEntry.GetDouble(-1));
-  
+  // robotmap.contGroup.Update(); // update selectors, etc. [OPTIONAL]
 
   // if (robotmap.contGroup.Get(ControlMap::compressorOn, controllers::Controller::ONRISE))
-  robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
+  robotmap.controlSystem.compressor.SetTarget(state::kForward);
 
   robotmap.controlSystem.compressor.Update(dt);
 
@@ -57,7 +50,12 @@ void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  double leftPower = -robotmap.xbox.GetAxis(robotmap.xbox.kLeftYAxis);
+  double rightPower = -robotmap.xbox.GetAxis(robotmap.xbox.kRightYAxis);
+
+  drivetrain->Set(leftPower, rightPower);
+}
 
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}

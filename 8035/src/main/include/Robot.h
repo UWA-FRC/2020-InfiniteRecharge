@@ -6,6 +6,11 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <networktables/NetworkTableInstance.h>
 
+#include "controllers/Controllers.h"
+#include "actuators/VoltageController.h"
+#include "WMLCtre.h"
+#include "Gearbox.h"
+
 #include "RobotMap.h"
 #include "strategy/StrategyController.h"
 #include "NTProvider.h"
@@ -25,7 +30,6 @@ class Robot : public frc::TimedRobot, protected wml::StrategyController, protect
 
   void TestInit() override;
   void TestPeriodic() override;
-
 
   RobotMap robotmap;
 

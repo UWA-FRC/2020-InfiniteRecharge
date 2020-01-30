@@ -18,30 +18,30 @@
 #include "Drivetrain.h"
 
 struct RobotMap {
-  wml::controllers::Joystick joy1{ 0 }; // Driver
-  wml::controllers::Joystick joy2{ 1 }; // Co-Driver
+  wml::controllers::XboxController xbox{ 0 }; // Driver
+  // wml::controllers::Joystick joy2{ 1 }; // Co-Driver
 
-  wml::controllers::SmartControllerGroup contGroup{ joy1, joy2 };
+  // wml::controllers::SmartControllerGroup contGroup{ joy1, joy2 };
 
   // frc::PowerDistributionPanel pdp{0};
 
   struct DriveTrain {
-    wml::TalonSrx leftSrx{ 3 };
-    wml::VictorSpx leftSpx{ 4 };
-    wml::actuators::MotorVoltageController leftMotors = wml::actuators::MotorVoltageController::Group(leftSrx, leftSpx);
-    wml::sensors::DigitalEncoder leftEncoder{ 7, 6, 2048 };
-    wml::Gearbox leftGearbox{ &leftMotors, &leftEncoder, 8.45 };
+    wml::VictorSpx left1{ 7 };
+    wml::VictorSpx left2{ 6 };
+    wml::actuators::MotorVoltageController leftMotors = wml::actuators::MotorVoltageController::Group(left1, left2);
+    // wml::sensors::DigitalEncoder leftEncoder{ 7, 6, 2048 };
+    wml::Gearbox leftGearbox{ &leftMotors, nullptr, 8.45 };
 
-    wml::TalonSrx rightSrx{ 1 };
-    wml::VictorSpx rightSpx{ 2 };
-    wml::actuators::MotorVoltageController rightMotors = wml::actuators::MotorVoltageController::Group(rightSrx, rightSpx);
-    wml::sensors::DigitalEncoder rightEncoder{ 4, 5, 2048 };
-    wml::Gearbox rightGearbox{ &rightMotors, &rightEncoder, 8.45 };
+    wml::VictorSpx right1{ 5 };
+    wml::VictorSpx right2{ 8 };
+    wml::actuators::MotorVoltageController rightMotors = wml::actuators::MotorVoltageController::Group(right1, right2);
+    // wml::sensors::DigitalEncoder rightEncoder{ 4, 5, 2048 };
+    wml::Gearbox rightGearbox{ &rightMotors, nullptr, 8.45 };
 
     wml::sensors::NavX navx{frc::SPI::Port::kMXP, 200};
     wml::sensors::NavXGyro gyro{ navx.Angular(wml::sensors::AngularAxis::YAW) };
-    wml::sensors::NavXGyro pitchGgyro{ navx.Angular(wml::sensors::AngularAxis::ROLL) }; // navx is 'sideways';
-    wml::sensors::NavXGyro rollGyro{ navx.Angular(wml::sensors::AngularAxis::PITCH) };  // pitch <=> roll
+    // wml::sensors::NavXGyro pitchGgyro{ navx.Angular(wml::sensors::AngularAxis::ROLL) }; // navx is 'sideways';
+    // wml::sensors::NavXGyro rollGyro{ navx.Angular(wml::sensors::AngularAxis::PITCH) };  // pitch <=> roll
 
     wml::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 };
   };
@@ -51,18 +51,6 @@ struct RobotMap {
 
   struct ControlSystem {
     wml::actuators::Compressor compressor{ 1 };
-    
-    // vision
-    std::shared_ptr<nt::NetworkTable> visionTable = nt::NetworkTableInstance::GetDefault().GetTable("VisionTracking");
-    std::shared_ptr<nt::NetworkTable> hatchTable = visionTable->GetSubTable("HatchTracking");
-    std::shared_ptr<nt::NetworkTable> tapeTable = visionTable->GetSubTable("TapeTracking");
-    
-    nt::NetworkTableEntry hatchDistanceEntry  = hatchTable->GetEntry("Hatch Distance"),
-                          hatchXoffsetEntry   = hatchTable->GetEntry("Hatch X Offset"),
-                          hatchYoffsetEntry   = hatchTable->GetEntry("Hatch Y Offset"),
-                          tapeDistanceEntry   = tapeTable->GetEntry("Distance"),
-                          tapeAngleEntry      = tapeTable->GetEntry("Angle"),
-                          tapeTargetEntry     = tapeTable->GetEntry("Target");
   };
 
   ControlSystem controlSystem;
