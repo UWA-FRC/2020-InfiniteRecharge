@@ -20,7 +20,7 @@ void curtin_frc_vision::run() {
 	ImageHeight = table->GetEntry("ImageHeight");
 	ImageWidth = table->GetEntry("ImageWidth");
 
-	inst.StartClientTeam(4788);
+	inst.StartClientTeam(8035);
 
 	vision.SetupVision(&Image, 0, 30, ResHeight, ResWidth, 1, "Turret Cam", true);
 	vision.CustomTrack(&TrackingImage, &Image, 30, 70, 0, 255, 0, 0);
