@@ -15,7 +15,10 @@
     "**/*~": true
   },
   "files.associations": {
-    "functional": "cpp"
+    "functional": "cpp",
+    "chrono": "cpp",
+    "random": "cpp",
+    "limits": "cpp"
   },
   "C_Cpp.default.configurationProvider": "vscode-wpilib"
 }
