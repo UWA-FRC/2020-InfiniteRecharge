@@ -5,7 +5,6 @@
 #include <frc/PowerDistributionPanel.h>
 
 #include "WMLCtre.h"
-#include "WMLRev.h"
 #include "controllers/Controllers.h"
 #include "Gearbox.h"
 #include "actuators/BinaryServo.h"
@@ -29,7 +28,6 @@ struct RobotMap {
   struct DriveTrain {
     wml::TalonSrx leftSrx{ 3 };
     wml::VictorSpx leftSpx{ 4 };
-    wml::SparkMax sparkMax{ 1, wml::SparkMax::MotorType::kNEO };
     wml::actuators::MotorVoltageController leftMotors = wml::actuators::MotorVoltageController::Group(leftSrx, leftSpx);
     wml::sensors::DigitalEncoder leftEncoder{ 7, 6, 2048 };
     wml::Gearbox leftGearbox{ &leftMotors, &leftEncoder, 8.45 };
