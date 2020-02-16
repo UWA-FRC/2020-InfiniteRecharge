@@ -54,4 +54,14 @@ struct RobotMap {
   };
 
   ControlSystem controlSystem;
+
+  struct ClimbingWinch {
+    wml::TalonSrx winchMotor{ 9 };
+    wml::actuators::MotorVoltageController winchMotorGroup = wml::actuators::MotorVoltageController::Group(winchMotor);
+    wml::Gearbox winchGearbox{ &winchMotorGroup, nullptr, 8.45 };
+
+    wml::actuators::BinaryServo servo{ 0, 50, 160 };
+  };
+
+  ClimbingWinch climbingWinch;
 };

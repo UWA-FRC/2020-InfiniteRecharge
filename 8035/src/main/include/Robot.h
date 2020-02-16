@@ -15,6 +15,8 @@
 #include "strategy/StrategyController.h"
 #include "NTProvider.h"
 
+#include "ClimbingWinch.h"
+
 class Robot : public frc::TimedRobot, protected wml::StrategyController, protected wml::NTProvider {
  public:
   void RobotInit() override;
@@ -34,4 +36,6 @@ class Robot : public frc::TimedRobot, protected wml::StrategyController, protect
   RobotMap robotmap;
 
   wml::Drivetrain *drivetrain;
+
+  ClimbingWinch *winch;
 };
