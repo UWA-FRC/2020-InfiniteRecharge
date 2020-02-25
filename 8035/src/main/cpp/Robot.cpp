@@ -9,44 +9,42 @@
 
 using namespace frc;
 using namespace wml;
+using ButtonMode = wml::controllers::Controller::ButtonMode;
 
 double lastTimestamp;
 
 void Robot::RobotInit() {
-  lastTimestamp = Timer::GetFPGATimestamp();
+  robotmap.updateGroup(); // update the internal timestamp - DON'T REGISTER BEFORE THIS
+
 
   auto camera = CameraServer::GetInstance()->StartAutomaticCapture(0);
   camera.SetFPS(30);
   camera.SetResolution(160, 120);
 
-  drivetrain = new Drivetrain(robotmap.drivetrain.config);
+  // Controller Setup
+  robotmap.updateGroup += std::bind(&wml::controllers::SmartControllerGroup::Update, &robotmap.controllers);
 
-  StrategyController::Register(drivetrain);
-  NTProvider::Register(drivetrain);
+  // Drivetrain Setup
+  drivetrain = new Drivetrain(robotmap.drivetrain.config);
+  StrategyController::Register(drivetrain); NTProvider::Register(drivetrain);
+
+  // Intake Setup
+  intake = new RollerIntake(robotmap.intake.config);
+  StrategyController::Register(intake); NTProvider::Register(intake);
+
+  // Loader Setup
+  robotmap.updateGroup += std::bind(&Robot::LoaderUpdate, this);
+
+  // Shooter Setup
+  // - WIP -
+
+
+  robotmap.updateGroup.Register(std::bind(&Robot::StrategyControllerUpdate, this, wml::loops::_dt));
+  robotmap.updateGroup.Register(std::bind(&Robot::NTProviderControllerUpdate, this));
 }
 
 void Robot::RobotPeriodic() {
-  double dt = Timer::GetFPGATimestamp() - lastTimestamp;
-  lastTimestamp = Timer::GetFPGATimestamp();
-  robotmap.contGroup.Update(); // update selectors, etc. [OPTIONAL]
-
-  // Redundant, as it can already be accessed on shuffleboard via nt, but ~
-  // frc::SmartDashboard::PutNumber("Hatch Distance", robotmap.controlSystem.hatchDistanceEntry.GetDouble(-1));
-  // frc::SmartDashboard::PutNumber("Hatch X Offset", robotmap.controlSystem.hatchXoffsetEntry.GetDouble(0));
-  // frc::SmartDashboard::PutNumber("Hatch Y Offset", robotmap.controlSystem.hatchYoffsetEntry.GetDouble(0));
-  
-  // frc::SmartDashboard::PutNumber("Tape Distance", robotmap.controlSystem.tapeDistanceEntry.GetDouble(-1));
-  // frc::SmartDashboard::PutNumber("Tape Angle", robotmap.controlSystem.tapeAngleEntry.GetDouble(0));
-  // frc::SmartDashboard::PutNumber("Tape Target", robotmap.controlSystem.tapeTargetEntry.GetDouble(-1));
-  
-
-  // if (robotmap.contGroup.Get(ControlMap::compressorOn, controllers::Controller::ONRISE))
-  robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
-
-  robotmap.controlSystem.compressor.Update(dt);
-
-  StrategyController::Update(dt);
-  NTProvider::Update();
+  robotmap.updateGroup.UpdateOnce();
 }
 
 void Robot::DisabledInit() {
@@ -57,7 +55,18 @@ void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  // Intake Controlling
+  if (robotmap.controllers.Get(ControlMap::Intake::IN))         intake->SetIntaking();
+  else if (robotmap.controllers.Get(ControlMap::Intake::OUT))   intake->SetOuttaking();
+  else if (robotmap.controllers.Get(ControlMap::Intake::STOW))  intake->SetStowed();
+
+  // Loader Controlling
+  if (robotmap.controllers.Get(ControlMap::Loader::TOGGLE, ButtonMode::ONRISE)) loaderState = !loaderState;
+
+  // Shooter Controlling
+  // - WIP -
+}
 
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}

@@ -11,59 +11,89 @@
 #include "actuators/Compressor.h"
 #include "actuators/DoubleSolenoid.h"
 #include "actuators/VoltageController.h"
+#include "loops/UpdateGroup.h"
 #include "sensors/Encoder.h"
 #include "sensors/LimitSwitch.h"
 #include "sensors/NavX.h"
 
+#include "ControlMap.h"
+
 #include "Drivetrain.h"
+#include "subsystems/RollerIntake.h"
 
 struct RobotMap {
-  wml::controllers::Joystick joy1{ 0 }; // Driver
-  wml::controllers::Joystick joy2{ 1 }; // Co-Driver
+  wml::controllers::XboxController xbox{ 0 };
 
-  wml::controllers::SmartControllerGroup contGroup{ joy1, joy2 };
+  wml::controllers::SmartControllerGroup controllers{ xbox };
 
   // frc::PowerDistributionPanel pdp{0};
 
+  wml::loops::UpdateGroup updateGroup;
+
   struct DriveTrain {
-    wml::TalonSrx leftSrx{ 3 };
-    wml::VictorSpx leftSpx{ 4 };
-    wml::actuators::MotorVoltageController leftMotors = wml::actuators::MotorVoltageController::Group(leftSrx, leftSpx);
-    wml::sensors::DigitalEncoder leftEncoder{ 7, 6, 2048 };
-    wml::Gearbox leftGearbox{ &leftMotors, &leftEncoder, 8.45 };
+    wml::TalonSrx left1{ 3 };
+    wml::TalonSrx left2{ 4 };
 
-    wml::TalonSrx rightSrx{ 1 };
-    wml::VictorSpx rightSpx{ 2 };
-    wml::actuators::MotorVoltageController rightMotors = wml::actuators::MotorVoltageController::Group(rightSrx, rightSpx);
+    wml::TalonSrx right1{ 1 };
+    wml::TalonSrx right2{ 2 };
+
+
+    wml::actuators::MotorVoltageController leftMotors = wml::actuators::MotorVoltageController::Group(left1, left2);
+    wml::Gearbox leftGearbox{ &leftMotors, nullptr, 8.45 };
+
+    wml::actuators::MotorVoltageController rightMotors = wml::actuators::MotorVoltageController::Group(right1, right2);
     wml::sensors::DigitalEncoder rightEncoder{ 4, 5, 2048 };
-    wml::Gearbox rightGearbox{ &rightMotors, &rightEncoder, 8.45 };
+    wml::Gearbox rightGearbox{ &rightMotors, nullptr, 8.45 };
 
-    wml::sensors::NavX navx{frc::SPI::Port::kMXP, 200};
+    wml::sensors::NavX navx{ frc::SPI::Port::kMXP, 200 };
     wml::sensors::NavXGyro gyro{ navx.Angular(wml::sensors::AngularAxis::YAW) };
-    wml::sensors::NavXGyro pitchGgyro{ navx.Angular(wml::sensors::AngularAxis::ROLL) }; // navx is 'sideways';
-    wml::sensors::NavXGyro rollGyro{ navx.Angular(wml::sensors::AngularAxis::PITCH) };  // pitch <=> roll
 
     wml::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 };
-  };
+  }; DriveTrain drivetrain;
 
-  DriveTrain drivetrain;
+
+  struct Intake {
+    wml::actuators::DoubleSolenoid intakeSolenoid{ 1, 2, 0.3 };
+
+    wml::TalonSrx intakeSrx{ 10 };
+
+
+    wml::actuators::MotorVoltageController intakeMotors = wml::actuators::MotorVoltageController::Group(intakeSrx);
+    wml::Gearbox intakeGearbox{ &intakeMotors, nullptr, 1 };
+
+    RollerIntakeConfig config{ intakeGearbox, intakeSolenoid, ControlMap::Intake::intakingThrottle, ControlMap::Intake::outtakingThrottle };
+  }; Intake intake;
+
+
+  struct Loader {
+    wml::TalonSrx loaderSrx{ 11 };
+
+
+    wml::actuators::MotorVoltageController loaderMotors = wml::actuators::MotorVoltageController::Group(loaderSrx);
+    wml::Gearbox loaderGearbox{ &loaderMotors, nullptr, 1 };
+  }; Loader loader;
+
+
+  struct Shooter {
+    wml::TalonSrx shooterSrx{ 12 };
+
+
+    wml::actuators::MotorVoltageController shooterMotors = wml::actuators::MotorVoltageController::Group(shooterSrx);
+    wml::Gearbox shooterGearbox{ &shooterMotors, nullptr, 1 };
+  }; Shooter shooter;
 
 
   struct ControlSystem {
-    wml::actuators::Compressor compressor{ 1 };
-    
     // vision
-    std::shared_ptr<nt::NetworkTable> visionTable = nt::NetworkTableInstance::GetDefault().GetTable("VisionTracking");
-    std::shared_ptr<nt::NetworkTable> hatchTable = visionTable->GetSubTable("HatchTracking");
-    std::shared_ptr<nt::NetworkTable> tapeTable = visionTable->GetSubTable("TapeTracking");
+    // std::shared_ptr<nt::NetworkTable> visionTable = nt::NetworkTableInstance::GetDefault().GetTable("VisionTracking");
+    // std::shared_ptr<nt::NetworkTable> hatchTable = visionTable->GetSubTable("HatchTracking");
+    // std::shared_ptr<nt::NetworkTable> tapeTable = visionTable->GetSubTable("TapeTracking");
     
-    nt::NetworkTableEntry hatchDistanceEntry  = hatchTable->GetEntry("Hatch Distance"),
-                          hatchXoffsetEntry   = hatchTable->GetEntry("Hatch X Offset"),
-                          hatchYoffsetEntry   = hatchTable->GetEntry("Hatch Y Offset"),
-                          tapeDistanceEntry   = tapeTable->GetEntry("Distance"),
-                          tapeAngleEntry      = tapeTable->GetEntry("Angle"),
-                          tapeTargetEntry     = tapeTable->GetEntry("Target");
-  };
-
-  ControlSystem controlSystem;
+    // nt::NetworkTableEntry hatchDistanceEntry  = hatchTable->GetEntry("Hatch Distance"),
+    //                       hatchXoffsetEntry   = hatchTable->GetEntry("Hatch X Offset"),
+    //                       hatchYoffsetEntry   = hatchTable->GetEntry("Hatch Y Offset"),
+    //                       tapeDistanceEntry   = tapeTable->GetEntry("Distance"),
+    //                       tapeAngleEntry      = tapeTable->GetEntry("Angle"),
+    //                       tapeTargetEntry     = tapeTable->GetEntry("Target");
+  }; ControlSystem controlSystem;
 };
