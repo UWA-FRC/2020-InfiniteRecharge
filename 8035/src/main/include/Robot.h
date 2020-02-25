@@ -10,6 +10,9 @@
 #include "strategy/StrategyController.h"
 #include "NTProvider.h"
 
+#include "NTUtil/Slave.h"
+#include "NTUtil/Master.h"
+
 class Robot : public frc::TimedRobot, protected wml::StrategyController, protected wml::NTProvider {
  public:
   void RobotInit() override;
@@ -30,4 +33,9 @@ class Robot : public frc::TimedRobot, protected wml::StrategyController, protect
   RobotMap robotmap;
 
   wml::Drivetrain *drivetrain;
+
+
+  double slave = 2, master = 4;
+  wml::NTUtil::Slave<double> doubleSlave{ nt::NetworkTableInstance::GetDefault().GetTable("NTUtil"), "slave" , &slave };
+  wml::NTUtil::Master<double> doubleMaster{ nt::NetworkTableInstance::GetDefault().GetTable("NTUtil"), "master", &master };
 };
