@@ -6,6 +6,15 @@ using namespace wml::controllers;
 using namespace ControlMap;
 
 
+const double AXIS_DEADZONE = 0.1;
+
+
+const tAxis Drivebase::LEFT     = { DRIVER, XboxController::kLeftYAxis };
+const tAxis Drivebase::RIGHT    = { DRIVER, XboxController::kRightYAxis };
+
+const double Drivebase::THROTTLE = 1;
+
+
 const tButtonList Intake::IN    = { { DRIVER, XboxController::kA } };
 const tButtonList Intake::OUT   = { { DRIVER, XboxController::kB } };
 const tButtonList Intake::STOW  = { { DRIVER, XboxController::kX } };

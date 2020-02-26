@@ -56,6 +56,12 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
+  // Drivebase Controlling
+  drivetrain->Set(
+    robotmap.controllers.Get(ControlMap::Drivebase::LEFT) * ControlMap::Drivebase::THROTTLE,
+    robotmap.controllers.Get(ControlMap::Drivebase::RIGHT) * ControlMap::Drivebase::THROTTLE
+  );
+
   // Intake Controlling
   if (robotmap.controllers.Get(ControlMap::Intake::IN))         intake->SetIntaking();
   else if (robotmap.controllers.Get(ControlMap::Intake::OUT))   intake->SetOuttaking();

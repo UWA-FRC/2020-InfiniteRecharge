@@ -8,6 +8,15 @@ namespace ControlMap {
   const int DRIVER = 1;
   const int CODRIVER = 2;
 
+  extern const double AXIS_DEADZONE;
+
+  namespace Drivebase {
+    extern const wml::controllers::tAxis LEFT;
+    extern const wml::controllers::tAxis RIGHT;
+
+    extern const double THROTTLE;
+  }
+
   namespace Intake {
     extern const wml::controllers::tButtonList IN;
     extern const wml::controllers::tButtonList OUT;
