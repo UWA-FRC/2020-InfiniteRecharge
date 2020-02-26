@@ -49,6 +49,8 @@ void curtin_frc_vision::run() {
 			TargetY.SetDouble(offsetY);
 			ImageHeight.SetDouble(ResHeight);
 			ImageWidth.SetDouble(ResWidth);
+
+			std::cout << "[INFO] X: " << offsetX << " Y: " << offsetY << " H: " << ResHeight << " W: " << ResWidth << std::endl;
 		} else {
 			visionTable->PutBoolean("Vision Active", false);
 		}
