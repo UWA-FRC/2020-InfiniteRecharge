@@ -24,19 +24,20 @@
 
 struct RobotMap {
   wml::controllers::XboxController xbox{ 0 };
+  wml::controllers::XboxController xbox2{ 1 };
 
-  wml::controllers::SmartControllerGroup controllers{ xbox };
+  wml::controllers::SmartControllerGroup controllers{ xbox, xbox2 };
 
   // frc::PowerDistributionPanel pdp{0};
 
   wml::loops::UpdateGroup updateGroup;
 
   struct DriveTrain {
-    wml::TalonSrx left1{ 3 };
-    wml::TalonSrx left2{ 4 };
+    wml::VictorSpx left1{ 5 };
+    wml::VictorSpx left2{ 8 };
 
-    wml::TalonSrx right1{ 1 };
-    wml::TalonSrx right2{ 2 };
+    wml::VictorSpx right1{ 6 };
+    wml::VictorSpx right2{ 7 };
 
 
     wml::actuators::MotorVoltageController leftMotors = wml::actuators::MotorVoltageController::Group(left1, left2);
@@ -54,45 +55,47 @@ struct RobotMap {
 
 
   struct Intake {
-    wml::actuators::DoubleSolenoid intakeSolenoid{ 1, 2, 0.3 };
+    // wml::actuators::DoubleSolenoid intakeSolenoid{ 1, 2, 0.3 };
+    wml::actuators::BinaryServo temp{ 1, 0, 1 };
 
-    wml::TalonSrx intakeSrx{ 10 };
+    wml::TalonSrx intakeSrx{ 2 };
 
 
     wml::actuators::MotorVoltageController intakeMotors = wml::actuators::MotorVoltageController::Group(intakeSrx);
-    wml::Gearbox intakeGearbox{ &intakeMotors, nullptr, 1 };
+    wml::Gearbox intakeGearbox{ &intakeMotors, nullptr, 4 };
 
-    RollerIntakeConfig config{ intakeGearbox, intakeSolenoid, ControlMap::Intake::Throttles::INTAKING, ControlMap::Intake::Throttles::OUTTAKING };
+    RollerIntakeConfig config{ intakeGearbox, temp /*intakeSolenoid*/, ControlMap::Intake::Throttles::INTAKING, ControlMap::Intake::Throttles::OUTTAKING };
   }; Intake intake;
 
 
-  struct Loader {
-    wml::TalonSrx loaderSrx{ 11 };
+  struct Indexer {
+    wml::TalonSrx indexerSrx{ 3 };
 
 
-    wml::actuators::MotorVoltageController loaderMotors = wml::actuators::MotorVoltageController::Group(loaderSrx);
-    wml::Gearbox loaderGearbox{ &loaderMotors, nullptr, 1 };
-  }; Loader loader;
+    wml::actuators::MotorVoltageController indexerMotors = wml::actuators::MotorVoltageController::Group(indexerSrx);
+    wml::Gearbox indexerGearbox{ &indexerMotors, nullptr, 4 };
+  }; Indexer indexer;
 
 
   struct Shooter {
-    wml::TalonSrx shooterSrx{ 12 };
+    wml::TalonSrx shooter1{ 9 };
+    wml::TalonSrx shooter2{ 10 };
 
 
-    wml::actuators::MotorVoltageController shooterMotors = wml::actuators::MotorVoltageController::Group(shooterSrx);
-    wml::Gearbox shooterGearbox{ &shooterMotors, nullptr, 1 };
+    wml::actuators::MotorVoltageController shooterMotors = wml::actuators::MotorVoltageController::Group(shooter1, shooter2);
+    wml::Gearbox shooterGearbox{ &shooterMotors, nullptr, 3 };
   }; Shooter shooter;
 
 
   struct Climber {
-    wml::TalonSrx climberWinchSrx{ 13 };
-    wml::actuators::BinaryServo climberWinchServo{ 4, 100, 150 };
+    wml::TalonSrx climberWinchSrx{ 4 };
+    wml::actuators::BinaryServo climberWinchServo{ 0, 150, 50 };
 
-    wml::TalonSrx climberElevatorSrx{ 15 };
+    wml::TalonSrx climberElevatorSrx{ 11 };
 
 
     wml::actuators::MotorVoltageController climberWinchMotors = wml::actuators::MotorVoltageController::Group(climberWinchSrx);
-    wml::Gearbox climberWinchGearbox{ &climberWinchMotors, nullptr, 1 };
+    wml::Gearbox climberWinchGearbox{ &climberWinchMotors, nullptr, 30 };
 
     wml::actuators::MotorVoltageController climberElevatorMotors = wml::actuators::MotorVoltageController::Group(climberElevatorSrx);
     wml::Gearbox climberElevatorGearbox{ &climberElevatorMotors, nullptr, 1 };

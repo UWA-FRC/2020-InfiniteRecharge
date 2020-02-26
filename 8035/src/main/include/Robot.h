@@ -37,10 +37,11 @@ class Robot : public frc::TimedRobot, protected wml::StrategyController, protect
 
   RollerIntake *intake;
 
-  bool loaderState = false;
-  void LoaderUpdate() { robotmap.loader.loaderGearbox.transmission->SetVoltage(loaderState ? ControlMap::Loader::THROTTLE : 0); };
+  // intake
 
-  // Shooter
+#if SHOOTER_TOGGLE_MODE
+  bool shooterToggle = false;
+#endif
 
   Climber *climber;
 };

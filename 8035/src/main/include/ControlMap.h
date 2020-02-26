@@ -9,6 +9,8 @@ namespace ControlMap {
   extern const double AXIS_DEADZONE;
 
   namespace Drivebase {
+    #define DRIVING_ENABLED true
+
     extern const wml::controllers::tAxis LEFT;
     extern const wml::controllers::tAxis RIGHT;
 
@@ -26,16 +28,18 @@ namespace ControlMap {
     }
   }
 
-  namespace Loader {
-    extern const wml::controllers::tButtonList TOGGLE;
+  namespace Indexer {
+    extern const wml::controllers::tAxis SPEED;
 
     extern const double THROTTLE;
   }
 
   namespace Shooter {
+    #define SHOOTER_TOGGLE_MODE true
+
     extern const wml::controllers::tButtonList FIRE;
 
-    // extern const int 
+    extern const double THROTTLE;
   }
 
   namespace Climber {

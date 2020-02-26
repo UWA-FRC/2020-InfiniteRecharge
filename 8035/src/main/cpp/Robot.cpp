@@ -25,22 +25,23 @@ void Robot::RobotInit() {
   robotmap.updateGroup += std::bind(&wml::controllers::SmartControllerGroup::Update, &robotmap.controllers);
 
   // Drivetrain Setup
+  robotmap.drivetrain.config.leftDrive.transmission->SetInverted(true);
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
-  StrategyController::Register(drivetrain); NTProvider::Register(drivetrain);
+  /*StrategyController::Register(drivetrain);*/ NTProvider::Register(drivetrain); robotmap.updateGroup += drivetrain;
 
   // Intake Setup
   intake = new RollerIntake(robotmap.intake.config);
-  StrategyController::Register(intake); NTProvider::Register(intake);
+  /*StrategyController::Register(intake);*/ NTProvider::Register(intake); robotmap.updateGroup += intake;
 
-  // Loader Setup
-  robotmap.updateGroup += std::bind(&Robot::LoaderUpdate, this);
+  // Indexer Setup
+  robotmap.indexer.indexerGearbox.transmission->SetInverted(true);
 
   // Shooter Setup
-  // - WIP -
+  robotmap.shooter.shooterGearbox.transmission->SetInverted(true);
 
   // Climber Setup
   climber = new Climber(robotmap.climber.config);
-  StrategyController::Register(climber); NTProvider::Register(climber);
+  /*StrategyController::Register(climber);*/ NTProvider::Register(climber); robotmap.updateGroup += climber;
 
 
   robotmap.updateGroup.Register(std::bind(&Robot::StrategyControllerUpdate, this, wml::loops::_dt));
@@ -61,21 +62,32 @@ void Robot::AutonomousPeriodic() {}
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
   // Drivebase Controlling
+#if DRIVING_ENABLED
   drivetrain->Set(
     robotmap.controllers.Get(ControlMap::Drivebase::LEFT) * ControlMap::Drivebase::THROTTLE,
     robotmap.controllers.Get(ControlMap::Drivebase::RIGHT) * ControlMap::Drivebase::THROTTLE
   );
+#endif
 
   // Intake Controlling
   if      (robotmap.controllers.Get(ControlMap::Intake::IN))    intake->SetIntaking();
   else if (robotmap.controllers.Get(ControlMap::Intake::OUT))   intake->SetOuttaking();
   else if (robotmap.controllers.Get(ControlMap::Intake::STOW))  intake->SetStowed();
 
-  // Loader Controlling
-  if (robotmap.controllers.Get(ControlMap::Loader::TOGGLE, ButtonMode::ONRISE)) loaderState = !loaderState;
+  // Indexer Controlling
+  robotmap.indexer.indexerGearbox.transmission->SetVoltage(
+    robotmap.controllers.Get(ControlMap::Indexer::SPEED) * ControlMap::Indexer::THROTTLE * 12
+  );
 
   // Shooter Controlling
-  // - WIP -
+  double shooterVoltage = 0;
+#if SHOOTER_TOGGLE_MODE
+  if (robotmap.controllers.Get(ControlMap::Shooter::FIRE, ButtonMode::ONFALL)) shooterToggle = !shooterToggle;
+  if (shooterToggle) shooterVoltage = 12;
+#else
+  shooterVoltage = robotmap.controllers.Get(ControlMap::Shooter::FIRE) * 12;
+#endif
+robotmap.shooter.shooterGearbox.transmission->SetVoltage(shooterVoltage * ControlMap::Shooter::THROTTLE);
 
   // Climber Controlling
   double climberLower = robotmap.controllers.Get(ControlMap::Climber::LOWER);

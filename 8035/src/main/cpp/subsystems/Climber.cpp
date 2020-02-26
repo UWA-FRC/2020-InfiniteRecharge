@@ -66,6 +66,8 @@ ClimberConfig &Climber::GetConfig() { return _config; }
 
 void Climber::OnStatePeriodic(ClimberState state, double dt) {
   double voltage = 0;
+
+  if (state == ClimberState::kSetpoint) if (GetSetpoint() < 0) SetHold();
   
   switch (state) {
    case ClimberState::kManual:
@@ -79,6 +81,7 @@ void Climber::OnStatePeriodic(ClimberState state, double dt) {
 
    case ClimberState::kSetpoint:
     voltage = 1;
+    _SetSetpoint(GetSetpoint() - dt);
     GetConfig().ratchetLock.SetTarget(kReverse);
     break;
 
@@ -91,4 +94,6 @@ void Climber::OnStatePeriodic(ClimberState state, double dt) {
 
   GetConfig().elevator.transmission->SetVoltage(voltage * (voltage > 0 ? GetConfig().raising_throttle : GetConfig().lowering_throttle));                                         // NEED TO ACCOUNT FOR GEARBOX RATIO
   if (state == ClimberState::kWinching) { GetConfig().winch.transmission->SetVoltage(voltage * GetConfig().winch_throttle); }  // NEED TO ACCOUNT FOR GEARBOX RATIO
+
+  GetConfig().ratchetLock.Update(dt);
 }

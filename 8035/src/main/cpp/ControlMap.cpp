@@ -15,27 +15,29 @@ const tAxis Drivebase::RIGHT    = { DRIVER, XboxController::kRightYAxis };
 const double Drivebase::THROTTLE = 1;
 
 
-const tButtonList Intake::IN    = { { DRIVER, XboxController::kA } };
-const tButtonList Intake::OUT   = { { DRIVER, XboxController::kY } };
-const tButtonList Intake::STOW  = { { DRIVER, XboxController::kB } };
+const tButtonList Intake::IN    = { { CODRIVER, XboxController::kA } };
+const tButtonList Intake::OUT   = { { CODRIVER, XboxController::kY } };
+const tButtonList Intake::STOW  = { { CODRIVER, XboxController::kX } };
 
-const double Intake::Throttles::INTAKING    = 1;
+const double Intake::Throttles::INTAKING    = 0.8;
 const double Intake::Throttles::OUTTAKING   = 0.5;
 
 
-const tButtonList Loader::TOGGLE = { { DRIVER, XboxController::kX } };
+const tAxis Indexer::SPEED = { CODRIVER, XboxController::kLeftYAxis };
 
-const double Loader::THROTTLE = 0.4;
-
-
-const tButtonList Shooter::FIRE = { { DRIVER, XboxController::kStart } };
+const double Indexer::THROTTLE = 0.4;
 
 
-const tAxis Climber::RAISE = { DRIVER, XboxController::kRightThrottle };
-const tAxis Climber::LOWER = { DRIVER, XboxController::kLeftThrottle };
+const tButtonList Shooter::FIRE = { { CODRIVER, XboxController::kStart } };
 
-const tButtonList Climber::TOGGLE_RATCHET   = { { DRIVER, XboxController::kBumperLeft } };
-const tButtonList Climber::PRESET           = { { DRIVER, XboxController::kBumperRight } };
+const double Shooter::THROTTLE = 0.25;
+
+
+const tAxis Climber::RAISE = { CODRIVER, XboxController::kRightThrottle };
+const tAxis Climber::LOWER = { CODRIVER, XboxController::kLeftThrottle };
+
+const tButtonList Climber::TOGGLE_RATCHET   = { { CODRIVER, XboxController::kBumperLeft } };
+const tButtonList Climber::PRESET           = { { CODRIVER, XboxController::kBumperRight } };
 
 const double Climber::PRESET_SETPOINT = 1; // in seconds
 
