@@ -43,6 +43,8 @@ def includeSrcInIncludeRoot = false
 // Set this to true to enable desktop support.
 def includeDesktopSupport = false
 
+def includeWMLRevSupport = false
+
 // Enable simulation gui support. Must check the box in vscode to enable support
 // upon debugging
 dependencies {
@@ -62,15 +64,28 @@ model {
             sources.cpp {
                 source {
                     srcDir 'src/main/cpp'
-                    srcDir '../WML/src/main/cpp'
                     include '**/*.cpp', '**/*.cc'
+
+                    srcDir '../WML/src/main/cpp'
+                    if (includeWMLRevSupport) {
+                        srcDir '../WML/src/rev/cpp'
+                    }
                 }
                 exportedHeaders {
                     srcDir 'src/main/include'
+
                     srcDir '../WML/src/main/include'
+                    if (includeWMLRevSupport) {
+                        srcDir '../WML/src/rev/include'
+                    }
+
                     if (includeSrcInIncludeRoot) {
                         srcDir 'src/main/cpp'
+
                         srcDir '../WML/src/main/cpp'
+                        if (includeWMLRevSupport) {
+                            srcDir '../WML/src/rev/cpp'
+                        }
                     }
                 }
                 // binaries.all {
