@@ -26,9 +26,9 @@ void Robot::RobotInit() {
 }
 
 void Robot::RobotPeriodic() {
-  double dt = Timer::GetFPGATimestamp() - lastTimestamp;
-  lastTimestamp = Timer::GetFPGATimestamp();
-  robotmap.contGroup.Update(); // update selectors, etc. [OPTIONAL]
+  // double dt = Timer::GetFPGATimestamp() - lastTimestamp;
+  // lastTimestamp = Timer::GetFPGATimestamp();
+  // robotmap.contGroup.Update(); // update selectors, etc. [OPTIONAL]
 
   // Redundant, as it can already be accessed on shuffleboard via nt, but ~
   // frc::SmartDashboard::PutNumber("Hatch Distance", robotmap.controlSystem.hatchDistanceEntry.GetDouble(-1));
@@ -41,12 +41,13 @@ void Robot::RobotPeriodic() {
   
 
   // if (robotmap.contGroup.Get(ControlMap::compressorOn, controllers::Controller::ONRISE))
-  robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
+  // robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
 
-  robotmap.controlSystem.compressor.Update(dt);
+  // robotmap.controlSystem.compressor.Update(dt);
 
-  StrategyController::Update(dt);
-  NTProvider::Update();
+  // StrategyController::Update(dt);
+  // NTProvider::Update();
+  doubleMaster.UpdateOnce();
 }
 
 void Robot::DisabledInit() {

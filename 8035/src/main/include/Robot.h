@@ -37,5 +37,5 @@ class Robot : public frc::TimedRobot, protected wml::StrategyController, protect
 
   double slave = 2, master = 4;
   wml::NTUtil::Slave<double> doubleSlave{ nt::NetworkTableInstance::GetDefault().GetTable("NTUtil"), "slave" , &slave };
-  wml::NTUtil::Master<double> doubleMaster{ nt::NetworkTableInstance::GetDefault().GetTable("NTUtil"), "master", &master };
+  wml::NTUtil::Master<double> doubleMaster{ nt::NetworkTableInstance::GetDefault().GetTable("NTUtil"), "master", &slave };
 };
