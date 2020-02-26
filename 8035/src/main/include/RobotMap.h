@@ -19,6 +19,7 @@
 #include "ControlMap.h"
 
 #include "Drivetrain.h"
+#include "subsystems/Climber.h"
 #include "subsystems/RollerIntake.h"
 
 struct RobotMap {
@@ -61,7 +62,7 @@ struct RobotMap {
     wml::actuators::MotorVoltageController intakeMotors = wml::actuators::MotorVoltageController::Group(intakeSrx);
     wml::Gearbox intakeGearbox{ &intakeMotors, nullptr, 1 };
 
-    RollerIntakeConfig config{ intakeGearbox, intakeSolenoid, ControlMap::Intake::intakingThrottle, ControlMap::Intake::outtakingThrottle };
+    RollerIntakeConfig config{ intakeGearbox, intakeSolenoid, ControlMap::Intake::Throttles::INTAKING, ControlMap::Intake::Throttles::OUTTAKING };
   }; Intake intake;
 
 
@@ -81,6 +82,30 @@ struct RobotMap {
     wml::actuators::MotorVoltageController shooterMotors = wml::actuators::MotorVoltageController::Group(shooterSrx);
     wml::Gearbox shooterGearbox{ &shooterMotors, nullptr, 1 };
   }; Shooter shooter;
+
+
+  struct Climber {
+    wml::TalonSrx climberWinchSrx{ 13 };
+    wml::actuators::BinaryServo climberWinchServo{ 4, 100, 150 };
+
+    wml::TalonSrx climberElevatorSrx{ 15 };
+
+
+    wml::actuators::MotorVoltageController climberWinchMotors = wml::actuators::MotorVoltageController::Group(climberWinchSrx);
+    wml::Gearbox climberWinchGearbox{ &climberWinchMotors, nullptr, 1 };
+
+    wml::actuators::MotorVoltageController climberElevatorMotors = wml::actuators::MotorVoltageController::Group(climberElevatorSrx);
+    wml::Gearbox climberElevatorGearbox{ &climberElevatorMotors, nullptr, 1 };
+
+    ClimberConfig config{
+      climberWinchGearbox,
+      climberWinchServo,
+      climberElevatorGearbox,
+      ControlMap::Climber::Throttles::RAISING,
+      ControlMap::Climber::Throttles::LOWERING,
+      ControlMap::Climber::Throttles::WINCH
+    };
+  }; Climber climber;
 
 
   struct ControlSystem {

@@ -38,6 +38,10 @@ void Robot::RobotInit() {
   // Shooter Setup
   // - WIP -
 
+  // Climber Setup
+  climber = new Climber(robotmap.climber.config);
+  StrategyController::Register(climber); NTProvider::Register(climber);
+
 
   robotmap.updateGroup.Register(std::bind(&Robot::StrategyControllerUpdate, this, wml::loops::_dt));
   robotmap.updateGroup.Register(std::bind(&Robot::NTProviderControllerUpdate, this));
@@ -63,7 +67,7 @@ void Robot::TeleopPeriodic() {
   );
 
   // Intake Controlling
-  if (robotmap.controllers.Get(ControlMap::Intake::IN))         intake->SetIntaking();
+  if      (robotmap.controllers.Get(ControlMap::Intake::IN))    intake->SetIntaking();
   else if (robotmap.controllers.Get(ControlMap::Intake::OUT))   intake->SetOuttaking();
   else if (robotmap.controllers.Get(ControlMap::Intake::STOW))  intake->SetStowed();
 
@@ -72,6 +76,17 @@ void Robot::TeleopPeriodic() {
 
   // Shooter Controlling
   // - WIP -
+
+  // Climber Controlling
+  double climberLower = robotmap.controllers.Get(ControlMap::Climber::LOWER);
+  if (climberLower > ControlMap::AXIS_DEADZONE) {
+    if (climber->GetState() == ClimberState::kWinching)
+          climber->SetWinching(climberLower);
+    else  climber->SetManual(robotmap.controllers.Get(ControlMap::Climber::RAISE) - climberLower);
+  } else {
+    if        (robotmap.controllers.Get(ControlMap::Climber::TOGGLE_RATCHET, ButtonMode::ONFALL))   climber->SetWinching(0);
+    else if   (robotmap.controllers.Get(ControlMap::Climber::PRESET, ButtonMode::ONFALL))           climber->SetSetpoint(ControlMap::Climber::PRESET_SETPOINT);
+  }
 }
 
 void Robot::TestInit() {}

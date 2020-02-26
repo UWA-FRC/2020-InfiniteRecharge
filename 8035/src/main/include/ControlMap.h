@@ -2,8 +2,6 @@
 
 #include "controllers/Inputs.h"
 
-namespace wml::controllers { typedef std::vector<tButton> tButtonList; }
-
 namespace ControlMap {
   const int DRIVER = 1;
   const int CODRIVER = 2;
@@ -41,8 +39,8 @@ namespace ControlMap {
   }
 
   namespace Climber {
-    extern const wml::controllers::tAxis        RAISE;
-    extern const wml::controllers::tAxis        LOWER;
+    extern const wml::controllers::tAxis        RAISE; // change to button?
+    extern const wml::controllers::tAxis        LOWER; // "
 
     extern const wml::controllers::tButtonList  TOGGLE_RATCHET;
     extern const wml::controllers::tButtonList  PRESET;

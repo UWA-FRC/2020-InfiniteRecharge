@@ -42,5 +42,5 @@ class Robot : public frc::TimedRobot, protected wml::StrategyController, protect
 
   // Shooter
 
-  // Climber
+  Climber *climber;
 };

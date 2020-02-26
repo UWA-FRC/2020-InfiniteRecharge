@@ -16,14 +16,14 @@ const double Drivebase::THROTTLE = 1;
 
 
 const tButtonList Intake::IN    = { { DRIVER, XboxController::kA } };
-const tButtonList Intake::OUT   = { { DRIVER, XboxController::kB } };
-const tButtonList Intake::STOW  = { { DRIVER, XboxController::kX } };
+const tButtonList Intake::OUT   = { { DRIVER, XboxController::kY } };
+const tButtonList Intake::STOW  = { { DRIVER, XboxController::kB } };
 
-const double Intake::Throttles::INTAKING    = 0.6;
-const double Intake::Throttles::OUTTAKING   = 0.4;
+const double Intake::Throttles::INTAKING    = 1;
+const double Intake::Throttles::OUTTAKING   = 0.5;
 
 
-const tButtonList Loader::TOGGLE = { { DRIVER, XboxController::kY } };
+const tButtonList Loader::TOGGLE = { { DRIVER, XboxController::kX } };
 
 const double Loader::THROTTLE = 0.4;
 
