@@ -61,7 +61,14 @@ void Robot::DisabledInit() {
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() {
+  drivetrain->Set(0, 0);
+  intake->SetStowed();
+  robotmap.indexer.indexerGearbox.transmission->SetVoltage(0);
+  robotmap.shooter.shooterGearbox.transmission->SetVoltage(0);
+  climber->SetHold();
+}
+
 void Robot::TeleopPeriodic() {
   // Drivebase Controlling
 #if DRIVING_ENABLED
