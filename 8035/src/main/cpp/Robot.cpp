@@ -40,6 +40,8 @@ void Robot::RobotInit() {
   robotmap.shooter.shooterGearbox.transmission->SetInverted(true);
 
   // Climber Setup
+  robotmap.climber.climberElevatorGearbox.transmission->SetInverted(true);
+  robotmap.climber.climberWinchGearbox.transmission->SetInverted(true);
   climber = new Climber(robotmap.climber.config);
   /*StrategyController::Register(climber);*/ NTProvider::Register(climber); robotmap.updateGroup += climber;
 
@@ -82,22 +84,28 @@ void Robot::TeleopPeriodic() {
   // Shooter Controlling
   double shooterVoltage = 0;
 #if SHOOTER_TOGGLE_MODE
-  if (robotmap.controllers.Get(ControlMap::Shooter::FIRE, ButtonMode::ONFALL)) shooterToggle = !shooterToggle;
+  if (robotmap.controllers.Get(ControlMap::Shooter::FIRE, ControlMap::DEFAULT_BUTTON_MODE)) shooterToggle = !shooterToggle;
   if (shooterToggle) shooterVoltage = 12;
 #else
   shooterVoltage = robotmap.controllers.Get(ControlMap::Shooter::FIRE) * 12;
 #endif
-robotmap.shooter.shooterGearbox.transmission->SetVoltage(shooterVoltage * ControlMap::Shooter::THROTTLE);
+  robotmap.shooter.shooterGearbox.transmission->SetVoltage(shooterVoltage * ControlMap::Shooter::THROTTLE);
 
   // Climber Controlling
   double climberLower = robotmap.controllers.Get(ControlMap::Climber::LOWER);
-  if (climberLower > ControlMap::AXIS_DEADZONE) {
-    if (climber->GetState() == ClimberState::kWinching)
-          climber->SetWinching(climberLower);
-    else  climber->SetManual(robotmap.controllers.Get(ControlMap::Climber::RAISE) - climberLower);
+  double climberRaise = robotmap.controllers.Get(ControlMap::Climber::RAISE);
+  if (std::abs(climberLower) + std::abs(climberRaise) > ControlMap::AXIS_DEADZONE) {
+    double climberDiff = climberRaise - climberLower;
+    if ((climber->GetState() == ClimberState::kWinching) && (climberDiff < 0)) {
+      climber->SetWinching(climberDiff);
+    } else {
+      climber->SetManual(climberDiff);
+    }
   } else {
-    if        (robotmap.controllers.Get(ControlMap::Climber::TOGGLE_RATCHET, ButtonMode::ONFALL))   climber->SetWinching(0);
-    else if   (robotmap.controllers.Get(ControlMap::Climber::PRESET, ButtonMode::ONFALL))           climber->SetSetpoint(ControlMap::Climber::PRESET_SETPOINT);
+    if        (robotmap.controllers.Get(ControlMap::Climber::TOGGLE_RATCHET, ControlMap::DEFAULT_BUTTON_MODE))    climber->SetWinching(0);
+    else if   (robotmap.controllers.Get(ControlMap::Climber::PRESET, ControlMap::DEFAULT_BUTTON_MODE))            climber->SetSetpoint(ControlMap::Climber::PRESET_SETPOINT);
+    else if   (climber->GetState() == ClimberState::kManual)                                                      climber->SetHold();
+    else if   (climber->GetState() == ClimberState::kWinching)                                                    climber->SetWinching(0);
   }
 }
 

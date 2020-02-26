@@ -80,7 +80,7 @@ void Climber::OnStatePeriodic(ClimberState state, double dt) {
     break;
 
    case ClimberState::kSetpoint:
-    voltage = 1;
+    voltage = 12;
     _SetSetpoint(GetSetpoint() - dt);
     GetConfig().ratchetLock.SetTarget(kReverse);
     break;

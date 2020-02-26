@@ -6,6 +6,8 @@ using namespace wml::controllers;
 using namespace ControlMap;
 
 
+const Controller::ButtonMode ControlMap::DEFAULT_BUTTON_MODE = Controller::ButtonMode::ONRISE;
+
 const double ControlMap::AXIS_DEADZONE = 0.1;
 
 
@@ -30,7 +32,7 @@ const double Indexer::THROTTLE = 0.75;
 
 const tButtonList Shooter::FIRE = { { CODRIVER, XboxController::kStart } };
 
-const double Shooter::THROTTLE = 0.25;
+const double Shooter::THROTTLE = 0.25; // use 1 for competition
 
 
 const tAxis Climber::RAISE = { CODRIVER, XboxController::kRightThrottle };
@@ -39,8 +41,8 @@ const tAxis Climber::LOWER = { CODRIVER, XboxController::kLeftThrottle };
 const tButtonList Climber::TOGGLE_RATCHET   = { { CODRIVER, XboxController::kBumperLeft } };
 const tButtonList Climber::PRESET           = { { CODRIVER, XboxController::kBumperRight } };
 
-const double Climber::PRESET_SETPOINT = 1; // in seconds
+const double Climber::PRESET_SETPOINT = 4.5; // in seconds
 
-const double Climber::Throttles::RAISING    = 0.7;
-const double Climber::Throttles::LOWERING   = 0.7;
-const double Climber::Throttles::WINCH      = 1;
+const double Climber::Throttles::RAISING    = 1;
+const double Climber::Throttles::LOWERING   = 1;
+const double Climber::Throttles::WINCH      = 0.9;

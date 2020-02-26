@@ -6,6 +6,7 @@ namespace ControlMap {
   const int DRIVER = 1;
   const int CODRIVER = 2;
 
+  extern const wml::controllers::Controller::ButtonMode DEFAULT_BUTTON_MODE;
   extern const double AXIS_DEADZONE;
 
   namespace Drivebase {
