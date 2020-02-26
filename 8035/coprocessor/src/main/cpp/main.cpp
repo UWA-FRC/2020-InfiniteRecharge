@@ -12,8 +12,7 @@ int main() {
 #endif
 
   std::cout << "Starting Vision Program" << std::endl;
-  curtin_frc_vision vision;
-  vision.run();
+  vision_main();
   std::cout << "Vision Program Exited. Was that meant to happen?" << std::endl;
   return -1;
 }
