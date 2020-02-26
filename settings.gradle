@@ -27,4 +27,4 @@ pluginManagement {
 }
 
 rootProject.name = 'UWA-FRC-2020'
-include '8035'//, 'wml'
+include '8035', '8035:coprocessor'//, 'wml'
