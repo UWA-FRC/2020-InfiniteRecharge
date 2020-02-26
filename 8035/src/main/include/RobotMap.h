@@ -11,59 +11,117 @@
 #include "actuators/Compressor.h"
 #include "actuators/DoubleSolenoid.h"
 #include "actuators/VoltageController.h"
+#include "loops/UpdateGroup.h"
 #include "sensors/Encoder.h"
 #include "sensors/LimitSwitch.h"
 #include "sensors/NavX.h"
 
+#include "ControlMap.h"
+
 #include "Drivetrain.h"
+#include "subsystems/Climber.h"
+#include "subsystems/RollerIntake.h"
 
 struct RobotMap {
-  wml::controllers::Joystick joy1{ 0 }; // Driver
-  wml::controllers::Joystick joy2{ 1 }; // Co-Driver
+  wml::controllers::XboxController xbox{ 0 };
+  wml::controllers::XboxController xbox2{ 1 };
 
-  wml::controllers::SmartControllerGroup contGroup{ joy1, joy2 };
+  wml::controllers::SmartControllerGroup controllers{ xbox, xbox2 };
 
   // frc::PowerDistributionPanel pdp{0};
 
+  wml::loops::UpdateGroup updateGroup;
+
   struct DriveTrain {
-    wml::TalonSrx leftSrx{ 3 };
-    wml::VictorSpx leftSpx{ 4 };
-    wml::actuators::MotorVoltageController leftMotors = wml::actuators::MotorVoltageController::Group(leftSrx, leftSpx);
-    wml::sensors::DigitalEncoder leftEncoder{ 7, 6, 2048 };
-    wml::Gearbox leftGearbox{ &leftMotors, &leftEncoder, 8.45 };
+    wml::VictorSpx left1{ 5 };
+    wml::VictorSpx left2{ 8 };
 
-    wml::TalonSrx rightSrx{ 1 };
-    wml::VictorSpx rightSpx{ 2 };
-    wml::actuators::MotorVoltageController rightMotors = wml::actuators::MotorVoltageController::Group(rightSrx, rightSpx);
+    wml::VictorSpx right1{ 6 };
+    wml::VictorSpx right2{ 7 };
+
+
+    wml::actuators::MotorVoltageController leftMotors = wml::actuators::MotorVoltageController::Group(left1, left2);
+    wml::Gearbox leftGearbox{ &leftMotors, nullptr, 8.45 };
+
+    wml::actuators::MotorVoltageController rightMotors = wml::actuators::MotorVoltageController::Group(right1, right2);
     wml::sensors::DigitalEncoder rightEncoder{ 4, 5, 2048 };
-    wml::Gearbox rightGearbox{ &rightMotors, &rightEncoder, 8.45 };
+    wml::Gearbox rightGearbox{ &rightMotors, nullptr, 8.45 };
 
-    wml::sensors::NavX navx{frc::SPI::Port::kMXP, 200};
+    wml::sensors::NavX navx{ frc::SPI::Port::kMXP, 200 };
     wml::sensors::NavXGyro gyro{ navx.Angular(wml::sensors::AngularAxis::YAW) };
-    wml::sensors::NavXGyro pitchGgyro{ navx.Angular(wml::sensors::AngularAxis::ROLL) }; // navx is 'sideways';
-    wml::sensors::NavXGyro rollGyro{ navx.Angular(wml::sensors::AngularAxis::PITCH) };  // pitch <=> roll
 
     wml::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 };
-  };
+  }; DriveTrain drivetrain;
 
-  DriveTrain drivetrain;
+
+  struct Intake {
+    // wml::actuators::DoubleSolenoid intakeSolenoid{ 1, 2, 0.3 };
+    wml::actuators::BinaryServo temp{ 1, 0, 1 };
+
+    wml::TalonSrx intakeSrx{ 2 };
+
+
+    wml::actuators::MotorVoltageController intakeMotors = wml::actuators::MotorVoltageController::Group(intakeSrx);
+    wml::Gearbox intakeGearbox{ &intakeMotors, nullptr, 4 };
+
+    RollerIntakeConfig config{ intakeGearbox, temp /*intakeSolenoid*/, ControlMap::Intake::Throttles::INTAKING, ControlMap::Intake::Throttles::OUTTAKING };
+  }; Intake intake;
+
+
+  struct Indexer {
+    wml::TalonSrx indexerSrx{ 3 };
+
+
+    wml::actuators::MotorVoltageController indexerMotors = wml::actuators::MotorVoltageController::Group(indexerSrx);
+    wml::Gearbox indexerGearbox{ &indexerMotors, nullptr, 4 };
+  }; Indexer indexer;
+
+
+  struct Shooter {
+    wml::TalonSrx shooter1{ 9 };
+    wml::TalonSrx shooter2{ 10 };
+
+
+    wml::actuators::MotorVoltageController shooterMotors = wml::actuators::MotorVoltageController::Group(shooter1, shooter2);
+    wml::Gearbox shooterGearbox{ &shooterMotors, nullptr, 3 };
+  }; Shooter shooter;
+
+
+  struct Climber {
+    wml::TalonSrx climberWinchSrx{ 4 };
+    wml::actuators::BinaryServo climberWinchServo{ 0, 150, 50 };
+
+    wml::TalonSrx climberElevatorSrx{ 11 };
+
+
+    wml::actuators::MotorVoltageController climberWinchMotors = wml::actuators::MotorVoltageController::Group(climberWinchSrx);
+    wml::Gearbox climberWinchGearbox{ &climberWinchMotors, nullptr, 30 };
+
+    wml::actuators::MotorVoltageController climberElevatorMotors = wml::actuators::MotorVoltageController::Group(climberElevatorSrx);
+    wml::Gearbox climberElevatorGearbox{ &climberElevatorMotors, nullptr, 1 };
+
+    ClimberConfig config{
+      climberWinchGearbox,
+      climberWinchServo,
+      climberElevatorGearbox,
+      ControlMap::Climber::Throttles::RAISING,
+      ControlMap::Climber::Throttles::LOWERING,
+      ControlMap::Climber::Throttles::WINCH
+    };
+  }; Climber climber;
 
 
   struct ControlSystem {
-    wml::actuators::Compressor compressor{ 1 };
-    
     // vision
-    std::shared_ptr<nt::NetworkTable> visionTable = nt::NetworkTableInstance::GetDefault().GetTable("VisionTracking");
-    std::shared_ptr<nt::NetworkTable> hatchTable = visionTable->GetSubTable("HatchTracking");
-    std::shared_ptr<nt::NetworkTable> tapeTable = visionTable->GetSubTable("TapeTracking");
+    // std::shared_ptr<nt::NetworkTable> visionTable = nt::NetworkTableInstance::GetDefault().GetTable("VisionTracking");
+    // std::shared_ptr<nt::NetworkTable> hatchTable = visionTable->GetSubTable("HatchTracking");
+    // std::shared_ptr<nt::NetworkTable> tapeTable = visionTable->GetSubTable("TapeTracking");
     
-    nt::NetworkTableEntry hatchDistanceEntry  = hatchTable->GetEntry("Hatch Distance"),
-                          hatchXoffsetEntry   = hatchTable->GetEntry("Hatch X Offset"),
-                          hatchYoffsetEntry   = hatchTable->GetEntry("Hatch Y Offset"),
-                          tapeDistanceEntry   = tapeTable->GetEntry("Distance"),
-                          tapeAngleEntry      = tapeTable->GetEntry("Angle"),
-                          tapeTargetEntry     = tapeTable->GetEntry("Target");
-  };
-
-  ControlSystem controlSystem;
+    // nt::NetworkTableEntry hatchDistanceEntry  = hatchTable->GetEntry("Hatch Distance"),
+    //                       hatchXoffsetEntry   = hatchTable->GetEntry("Hatch X Offset"),
+    //                       hatchYoffsetEntry   = hatchTable->GetEntry("Hatch Y Offset"),
+    //                       tapeDistanceEntry   = tapeTable->GetEntry("Distance"),
+    //                       tapeAngleEntry      = tapeTable->GetEntry("Angle"),
+    //                       tapeTargetEntry     = tapeTable->GetEntry("Target");
+  }; ControlSystem controlSystem;
 };
