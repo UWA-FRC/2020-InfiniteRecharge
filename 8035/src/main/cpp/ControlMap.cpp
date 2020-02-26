@@ -6,7 +6,7 @@ using namespace wml::controllers;
 using namespace ControlMap;
 
 
-const double AXIS_DEADZONE = 0.1;
+const double ControlMap::AXIS_DEADZONE = 0.1;
 
 
 const tAxis Drivebase::LEFT     = { DRIVER, XboxController::kLeftYAxis };
