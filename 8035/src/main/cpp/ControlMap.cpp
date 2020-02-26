@@ -25,7 +25,7 @@ const double Intake::Throttles::OUTTAKING   = 0.5;
 
 const tAxis Indexer::SPEED = { CODRIVER, XboxController::kLeftYAxis };
 
-const double Indexer::THROTTLE = 0.4;
+const double Indexer::THROTTLE = 0.75;
 
 
 const tButtonList Shooter::FIRE = { { CODRIVER, XboxController::kStart } };
