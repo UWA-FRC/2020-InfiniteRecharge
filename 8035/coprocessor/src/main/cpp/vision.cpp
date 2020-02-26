@@ -7,8 +7,8 @@ int ResWidth = 640, ResHeight = 480;
 
 double cx, cy;
 
-cv::Mat Image; // Origin Image
-cv::Mat TrackingImage; // Imaged after it has been filtered
+cv::Mat Image; // Original Image
+cv::Mat TrackingImage; // Image after it has been filtered
 cv::Mat ProcessingOutput; // Image after is has been processed
 
 void curtin_frc_vision::run() {
@@ -21,11 +21,11 @@ void curtin_frc_vision::run() {
 	ImageHeight = table->GetEntry("ImageHeight");
 	ImageWidth = table->GetEntry("ImageWidth");
 
-	inst.StartClientTeam(4788);
+	inst.StartClientTeam(8035);
 
-
-	vision.SetupVision(&Image, 0, 60, ResHeight, ResWidth, 1, "Turret Cam", true);
-	vision.CustomTrack(&TrackingImage, &Image, 30, 70, 50, 255, 0, 0);
+	int port = 1;
+	vision.SetupVision(&Image, port, 60, ResHeight, ResWidth, 1, "Shooter Cam", true);
+  vision.CustomTrack(&TrackingImage, &Image, 50, 70, 50, 255, 30, 255, 1, 1);
 	vision.Processing.visionHullGeneration.BoundingBox(&TrackingImage, &ProcessingOutput, &cx, &cy, 10);
 	#ifdef __DESKTOP__ 
 	std::cout << "Exposure Might be dissabled on local machine" << std::endl;
