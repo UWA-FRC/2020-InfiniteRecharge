@@ -32,7 +32,7 @@ const double Indexer::THROTTLE = 0.75;
 
 const tButtonList Shooter::FIRE = { { CODRIVER, XboxController::kStart } };
 
-const double Shooter::THROTTLE = 0.25; // use 1 for competition
+const double Shooter::THROTTLE = 1; // use 1 for competition
 
 
 const tAxis Climber::RAISE = { CODRIVER, XboxController::kRightThrottle };
