@@ -72,9 +72,10 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
   // Drivebase Controlling
 #if DRIVING_ENABLED
+  double left = robotmap.controllers.Get(ControlMap::Drivebase::LEFT), right = robotmap.controllers.Get(ControlMap::Drivebase::RIGHT);
   drivetrain->Set(
-    robotmap.controllers.Get(ControlMap::Drivebase::LEFT) * ControlMap::Drivebase::THROTTLE,
-    robotmap.controllers.Get(ControlMap::Drivebase::RIGHT) * ControlMap::Drivebase::THROTTLE
+    left * std::fabs(left) * ControlMap::Drivebase::THROTTLE,
+    right * std::fabs(right) * ControlMap::Drivebase::THROTTLE
   );
 #endif
 
