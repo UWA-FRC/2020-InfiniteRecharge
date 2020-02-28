@@ -65,32 +65,17 @@ model {
                 source {
                     srcDir 'src/main/cpp'
                     include '**/*.cpp', '**/*.cc'
-
-                    srcDir '../WML/src/main/cpp'
-                    if (includeWMLRevSupport) {
-                        srcDir '../WML/src/rev/cpp'
-                    }
                 }
                 exportedHeaders {
                     srcDir 'src/main/include'
 
-                    srcDir '../WML/src/main/include'
-                    if (includeWMLRevSupport) {
-                        srcDir '../WML/src/rev/include'
-                    }
-
                     if (includeSrcInIncludeRoot) {
                         srcDir 'src/main/cpp'
-
-                        srcDir '../WML/src/main/cpp'
-                        if (includeWMLRevSupport) {
-                            srcDir '../WML/src/rev/cpp'
-                        }
                     }
                 }
-                // binaries.all {
-                //     lib project: ':wml', library: 'wml', linkage: 'static'
-                // }
+                binaries.all {
+                    lib project: ':wml', library: 'wml', linkage: 'static'
+                }
             }
 
             // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
