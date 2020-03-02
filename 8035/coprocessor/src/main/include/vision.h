@@ -7,6 +7,5 @@
 
 #include <thread>
 #include <iostream>
-#include <windows.h>
 
 void vision_main();
