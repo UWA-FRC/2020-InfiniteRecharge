@@ -8,18 +8,18 @@ void vision_main() {
 
   CJ::VisionTracking vision;
 
-  cv::Mat Image; // Original Image
-  cv::Mat TrackingImage; // Image after it has been filtered
-  cv::Mat ProcessingOutput; // Image after is has been processed
+  cv::Mat image; // Original Image
+  cv::Mat trackingImage; // Image after it has been filtered
+  cv::Mat processingOutput; // Image after is has been processed
 
 	auto inst = nt::NetworkTableInstance::GetDefault();
 	auto visionTable = inst.GetTable("VisionTracking");
 	auto table = visionTable->GetSubTable("Target");
 
-	// TargetX = table->GetEntry("Target_X");
-	// TargetY = table->GetEntry("Target_Y");
-	// ImageHeight = table->GetEntry("ImageHeight");
-	// ImageWidth = table->GetEntry("ImageWidth");
+	auto targetX = table->GetEntry("Target_X");
+	auto targetY = table->GetEntry("Target_Y");
+	// auto imageHeight = table->GetEntry("imageHeight");
+	// auto imageWidth = table->GetEntry("imageWidth");
 
 	inst.StartClientTeam(8035);
 
@@ -28,17 +28,23 @@ void vision_main() {
   #ifdef __DESKTOP__
   port = 1;
   #endif
+
+	vision.SetupVision(&image, port, 60, ResHeight, ResWidth, 1, "Shooter Cam", true);
+  vision.CustomTrack(&trackingImage, &image, 50, 70, 50, 255, 30, 255, 3, 1);
+	vision.Processing.visionHullGeneration.BoundingBox(&trackingImage, &processingOutput, &cx, &cy, 10);
+
 	#ifdef __DESKTOP__
 	std::cout << "Exposure Might be dissabled on local machine" << std::endl;
 	#else
 	system("v4l2-ctl -d /dev/video0 --set-ctrl=exposure_absolute=1");
 	#endif
+
 	std::cout << "Vision Tracking Process Running" << std::endl;
 	while (true) {
-		if (vision.Camera.cam.sink.GrabFrame(Image) != 0) {
+		if (vision.Camera.cam.sink.GrabFrame(image) != 0) {
 
 			// Display Image
-			vision.Display("Output", &ProcessingOutput);
+			vision.Display("Output", &processingOutput);
 
 			//Calc offset
 			offsetX = cx-(ResWidth/2);
@@ -46,10 +52,10 @@ void vision_main() {
 
 			visionTable->PutBoolean("Vision Active", true);
 
-			// TargetX.SetDouble(offsetX);
-			// TargetY.SetDouble(offsetY);
-			// ImageHeight.SetDouble(ResHeight);
-			// ImageWidth.SetDouble(ResWidth);
+			targetX.SetDouble(offsetX);
+			targetY.SetDouble(offsetY);
+			// imageHeight.SetDouble(ResHeight);
+			// imageWidth.SetDouble(ResWidth);
 
 			std::cout << "[INFO] X: " << offsetX << " Y: " << offsetY << " H: " << ResHeight << " W: " << ResWidth << std::endl;
 		} else {
