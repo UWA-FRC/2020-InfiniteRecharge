@@ -1,65 +1,62 @@
 #include "vision.h"
 
 void vision_main() {
-  double offsetX, offsetY;
-  int ResWidth = 640, ResHeight = 480;
-
-  double cx, cy;
-
   CJ::VisionTracking vision;
 
   cv::Mat image; // Original Image
   cv::Mat trackingImage; // Image after it has been filtered
   cv::Mat processingOutput; // Image after is has been processed
 
-	auto inst = nt::NetworkTableInstance::GetDefault();
-	auto visionTable = inst.GetTable("VisionTracking");
-	auto table = visionTable->GetSubTable("Target");
+  auto inst = nt::NetworkTableInstance::GetDefault();
+  auto visionTable = inst.GetTable("VisionTracking");
+  auto table = visionTable->GetSubTable("Target");
 
-	auto targetX = table->GetEntry("Target_X");
-	auto targetY = table->GetEntry("Target_Y");
-	// auto imageHeight = table->GetEntry("imageHeight");
-	// auto imageWidth = table->GetEntry("imageWidth");
+  auto targetX = table->GetEntry("Target_X");
+  auto targetY = table->GetEntry("Target_Y");
+  // auto imageHeight = table->GetEntry("imageHeight");
+  // auto imageWidth = table->GetEntry("imageWidth");
 
-	inst.StartClientTeam(8035);
+  inst.StartClientTeam(Config::TEAM);
 
-	int port = 0;
+  int port = 0;
 
-  #ifdef __DESKTOP__
+#ifdef __DESKTOP__
   port = 1;
-  #endif
+#endif
 
-	vision.SetupVision(&image, port, 60, ResHeight, ResWidth, 1, "Shooter Cam", true);
+  vision.SetupVision(&image, port, 60, Config::Vision::RES_HEIGHT, Config::Vision::RES_WIDTH, 1, "Shooter Cam", true);
   vision.CustomTrack(&trackingImage, &image, 50, 70, 50, 255, 30, 255, 3, 1);
-	vision.Processing.visionHullGeneration.BoundingBox(&trackingImage, &processingOutput, &cx, &cy, 10);
 
-	#ifdef __DESKTOP__
-	std::cout << "Exposure Might be dissabled on local machine" << std::endl;
-	#else
-	system("v4l2-ctl -d /dev/video0 --set-ctrl=exposure_absolute=1");
-	#endif
+  double cx, cy;
+  vision.Processing.visionHullGeneration.BoundingBox(&trackingImage, &processingOutput, &cx, &cy, 10);
 
-	std::cout << "Vision Tracking Process Running" << std::endl;
-	while (true) {
-		if (vision.Camera.cam.sink.GrabFrame(image) != 0) {
+#ifdef __DESKTOP__
+  std::cout << "Exposure Might be dissabled on local machine" << std::endl;
+#else
+  system("v4l2-ctl -d /dev/video0 --set-ctrl=exposure_absolute=1");
+#endif
 
-			// Display Image
-			vision.Display("Output", &processingOutput);
+  std::cout << "Vision Tracking Process Running" << std::endl;
 
-			//Calc offset
-			offsetX = cx-(ResWidth/2);
-			offsetY = cy-(ResHeight/2);
+  double offsetX, offsetY;
+  while (true) {
+    if (vision.Camera.cam.sink.GrabFrame(image) != 0) {
 
-			visionTable->PutBoolean("Vision Active", true);
+      // Display Image
+      vision.Display("Output", &processingOutput);
 
-			targetX.SetDouble(offsetX);
-			targetY.SetDouble(offsetY);
-			// imageHeight.SetDouble(ResHeight);
-			// imageWidth.SetDouble(ResWidth);
+      //Calc offset
+      offsetX = cx - (Config::Vision::RES_WIDTH / 2);
+      offsetY = cy - (Config::Vision::RES_HEIGHT / 2);
 
-			std::cout << "[INFO] X: " << offsetX << " Y: " << offsetY << " H: " << ResHeight << " W: " << ResWidth << std::endl;
-		} else {
-			visionTable->PutBoolean("Vision Active", false);
-		}
-	}
+      visionTable->PutBoolean("Vision Active", true);
+
+      targetX.SetDouble(offsetX);
+      targetY.SetDouble(offsetY);
+
+      std::cout << "[INFO] X: " << offsetX << " Y: " << offsetY << " H: " << Config::Vision::RES_HEIGHT << " W: " << Config::Vision::RES_WIDTH << std::endl;
+    } else {
+      visionTable->PutBoolean("Vision Active", false);
+    }
+  }
 }

@@ -8,4 +8,6 @@
 #include <thread>
 #include <iostream>
 
+#include "Config.h"
+
 void vision_main();
