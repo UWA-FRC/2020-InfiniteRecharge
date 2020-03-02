@@ -19,9 +19,10 @@ void vision_main() {
   inst.StartClientTeam(Config::TEAM);
 
   int port = 0;
-
 #ifdef __DESKTOP__
-  port = 1;
+  port = Config::Vision::Ports::DESKTOP;
+#else
+  port = Config::Vision::Ports::COPROCESSOR;
 #endif
 
   vision.SetupVision(&image, port, 60, Config::Vision::RES_HEIGHT, Config::Vision::RES_WIDTH, 1, "Shooter Cam", true);
