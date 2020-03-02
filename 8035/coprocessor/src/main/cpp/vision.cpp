@@ -23,10 +23,11 @@ void vision_main() {
 
 	inst.StartClientTeam(8035);
 
-	int port = 1;
-	vision.SetupVision(&Image, port, 60, ResHeight, ResWidth, 1, "Shooter Cam", true);
-  vision.CustomTrack(&TrackingImage, &Image, 50, 70, 50, 255, 30, 255, 1, 1);
-	vision.Processing.visionHullGeneration.BoundingBox(&TrackingImage, &ProcessingOutput, &cx, &cy, 10);
+	int port = 0;
+
+  #ifdef __DESKTOP__
+  port = 1;
+  #endif
 	#ifdef __DESKTOP__
 	std::cout << "Exposure Might be dissabled on local machine" << std::endl;
 	#else
