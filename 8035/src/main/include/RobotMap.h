@@ -15,6 +15,7 @@
 #include "sensors/Encoder.h"
 #include "sensors/LimitSwitch.h"
 #include "sensors/NavX.h"
+#include "vision/Receiver.h"
 
 #include "ControlMap.h"
 
@@ -113,15 +114,6 @@ struct RobotMap {
 
   struct ControlSystem {
     // vision
-    // std::shared_ptr<nt::NetworkTable> visionTable = nt::NetworkTableInstance::GetDefault().GetTable("VisionTracking");
-    // std::shared_ptr<nt::NetworkTable> hatchTable = visionTable->GetSubTable("HatchTracking");
-    // std::shared_ptr<nt::NetworkTable> tapeTable = visionTable->GetSubTable("TapeTracking");
-    
-    // nt::NetworkTableEntry hatchDistanceEntry  = hatchTable->GetEntry("Hatch Distance"),
-    //                       hatchXoffsetEntry   = hatchTable->GetEntry("Hatch X Offset"),
-    //                       hatchYoffsetEntry   = hatchTable->GetEntry("Hatch Y Offset"),
-    //                       tapeDistanceEntry   = tapeTable->GetEntry("Distance"),
-    //                       tapeAngleEntry      = tapeTable->GetEntry("Angle"),
-    //                       tapeTargetEntry     = tapeTable->GetEntry("Target");
+    wml::vision::Receiver vision();
   }; ControlSystem controlSystem;
 };
