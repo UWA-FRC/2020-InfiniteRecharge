@@ -122,4 +122,4 @@ jobs:
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
-      tasks: 'clean :8035:build'
+      tasks: 'clean :8035:coprocessor:build'
