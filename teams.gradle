@@ -45,13 +45,18 @@ def includeDesktopSupport = false
 
 def includeWMLRevSupport = false
 
+project(':wml').ext.setProperty('includeSrcInIncludeRoot', includeSrcInIncludeRoot)
+project(':wml').ext.setProperty('includeDesktopSupport', includeDesktopSupport)
+project(':wml').ext.setProperty('includeWMLRevSupport', includeWMLRevSupport)
+
 // Enable simulation gui support. Must check the box in vscode to enable support
 // upon debugging
 dependencies {
     simulation wpi.deps.sim.gui(wpi.platforms.desktop, true)
 }
 
-// wpi.deps.vendor.loadFrom(project(':wml'))
+// other dependencies
+wpi.deps.vendor.loadFrom(project(':wml'))
 
 model {
     components {
@@ -65,32 +70,18 @@ model {
                 source {
                     srcDir 'src/main/cpp'
                     include '**/*.cpp', '**/*.cc'
-
-                    srcDir '../WML/src/main/cpp'
-                    if (includeWMLRevSupport) {
-                        srcDir '../WML/src/rev/cpp'
-                    }
                 }
                 exportedHeaders {
                     srcDir 'src/main/include'
 
-                    srcDir '../WML/src/main/include'
-                    if (includeWMLRevSupport) {
-                        srcDir '../WML/src/rev/include'
-                    }
-
                     if (includeSrcInIncludeRoot) {
                         srcDir 'src/main/cpp'
-
-                        srcDir '../WML/src/main/cpp'
-                        if (includeWMLRevSupport) {
-                            srcDir '../WML/src/rev/cpp'
-                        }
                     }
                 }
-                // binaries.all {
-                //     lib project: ':wml', library: 'wml', linkage: 'static'
-                // }
+            }
+
+            binaries.all {
+                lib project: ':wml', library: 'wml', linkage: 'static'
             }
 
             // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
@@ -109,9 +100,9 @@ model {
                 }
             }
 
-            // binaries.all {
-            //     lib project: ':wml', library: 'wml', linkage: 'static'
-            // }
+            binaries.all {
+                lib project: ':wml', library: 'wml', linkage: 'static'
+            }
 
             wpi.deps.wpilib(it)
             wpi.deps.googleTest(it)
@@ -120,8 +111,5 @@ model {
     }
 }
 
-// project(':wml').setProperty('includeSrcInIncludeRoot', includeSrcInIncludeRoot)
-// project(':wml').setProperty('includeDesktopSupport', includeDesktopSupport)
-
-// if (!project.hasProperty('no-wml-check'))
-//   tasks.check.dependsOn(':wml:check')
+if (!project.hasProperty('no-wml-check'))
+  tasks.check.dependsOn(':wml:check')
