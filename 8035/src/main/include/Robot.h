@@ -6,10 +6,12 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <networktables/NetworkTableInstance.h>
 
-#include "ControlMap.h"
-#include "RobotMap.h"
 #include "strategy/StrategyController.h"
 #include "NTProvider.h"
+
+#include "ControlMap.h"
+#include "RobotMap.h"
+#include "strategies/drivetrain/Manual.h"
 
 class Robot : public frc::TimedRobot, protected wml::StrategyController, protected wml::NTProvider {
  public:
@@ -34,6 +36,7 @@ class Robot : public frc::TimedRobot, protected wml::StrategyController, protect
   RobotMap robotmap;
 
   wml::Drivetrain *drivetrain;
+  std::shared_ptr<strategies::drivetrain::Manual> drivetrainManualStrategy;
 
   subsystems::RollerIntake *intake;
 

@@ -27,7 +27,14 @@ void Robot::RobotInit() {
   // Drivetrain Setup
   robotmap.drivetrain.config.leftDrive.transmission->SetInverted(true);
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
-  /*StrategyController::Register(drivetrain);*/ NTProvider::Register(drivetrain); robotmap.updateGroup += drivetrain;
+  drivetrainManualStrategy = std::make_shared<strategies::drivetrain::Manual>(drivetrain, &robotmap.controllers);
+  drivetrain->SetDefault(drivetrainManualStrategy);
+#if DRIVING_ENABLED
+  StrategyController::Register(drivetrain);
+#else
+  robotmap.updateGroup += drivetrain;
+#endif
+  NTProvider::Register(drivetrain);
 
   // Intake Setup
   intake = new RollerIntake(robotmap.intake.config);
@@ -51,6 +58,10 @@ void Robot::RobotInit() {
 }
 
 void Robot::RobotPeriodic() {
+#if !DRIVING_ENABLED
+  drivetrain->Set(0, 0);
+#endif
+
   robotmap.updateGroup.UpdateOnce();
 }
 
@@ -71,13 +82,7 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
   // Drivebase Controlling
-#if DRIVING_ENABLED
-  double left = robotmap.controllers.Get(ControlMap::Drivebase::LEFT), right = robotmap.controllers.Get(ControlMap::Drivebase::RIGHT);
-  drivetrain->Set(
-    left * std::fabs(left) * ControlMap::Drivebase::THROTTLE,
-    right * std::fabs(right) * ControlMap::Drivebase::THROTTLE
-  );
-#endif
+  // WIP - ADD AUTOAIM
 
   // Intake Controlling
   if      (robotmap.controllers.Get(ControlMap::Intake::IN))    intake->SetIntaking();
