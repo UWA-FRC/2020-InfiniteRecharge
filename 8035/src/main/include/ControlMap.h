@@ -38,6 +38,7 @@ namespace ControlMap {
   namespace Shooter {
     #define SHOOTER_TOGGLE_MODE true
 
+    extern const wml::controllers::tButtonList AUTOAIM;
     extern const wml::controllers::tButtonList FIRE;
 
     extern const double THROTTLE;
