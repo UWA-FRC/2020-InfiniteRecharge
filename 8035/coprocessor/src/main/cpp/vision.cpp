@@ -8,13 +8,12 @@ void vision_main() {
   cv::Mat processingOutput; // Image after is has been processed
 
   auto inst = nt::NetworkTableInstance::GetDefault();
-  auto visionTable = inst.GetTable("VisionTracking");
-  auto table = visionTable->GetSubTable("Target");
+  auto table = inst.GetTable("VisionTracking");
+  table->GetEntry("RES_HEIGHT").SetDouble(Config::Vision::RES_HEIGHT);
+  table->GetEntry("RES_WIDTH").SetDouble(Config::Vision::RES_WIDTH);
 
-  auto targetX = table->GetEntry("Target_X");
-  auto targetY = table->GetEntry("Target_Y");
-  // auto imageHeight = table->GetEntry("imageHeight");
-  // auto imageWidth = table->GetEntry("imageWidth");
+  auto offsetX = table->GetEntry("offsetX");
+  auto offsetY = table->GetEntry("offsetY");
 
   inst.StartClientTeam(Config::TEAM);
 
@@ -39,7 +38,7 @@ void vision_main() {
 
   std::cout << "Vision Tracking Process Running" << std::endl;
 
-  double offsetX, offsetY;
+  double _offsetX, _offsetY;
   while (true) {
     if (vision.Camera.cam.sink.GrabFrame(image) != 0) {
 
@@ -47,17 +46,17 @@ void vision_main() {
       vision.Display("Output", &processingOutput);
 
       //Calc offset
-      offsetX = cx - (Config::Vision::RES_WIDTH / 2);
-      offsetY = cy - (Config::Vision::RES_HEIGHT / 2);
+      _offsetX = cx - (Config::Vision::RES_WIDTH / 2);
+      _offsetY = cy - (Config::Vision::RES_HEIGHT / 2);
 
-      visionTable->PutBoolean("Vision Active", true);
+      table->PutBoolean("Vision Active", true);
 
-      targetX.SetDouble(offsetX);
-      targetY.SetDouble(offsetY);
+      offsetX.SetDouble(_offsetX);
+      offsetY.SetDouble(_offsetY);
 
-      std::cout << "[INFO] X: " << offsetX << " Y: " << offsetY << " H: " << Config::Vision::RES_HEIGHT << " W: " << Config::Vision::RES_WIDTH << std::endl;
+      std::cout << "[INFO] X: " << _offsetX << " Y: " << _offsetY << " H: " << Config::Vision::RES_HEIGHT << " W: " << Config::Vision::RES_WIDTH << std::endl;
     } else {
-      visionTable->PutBoolean("Vision Active", false);
+      table->PutBoolean("Vision Active", false);
     }
   }
 }
