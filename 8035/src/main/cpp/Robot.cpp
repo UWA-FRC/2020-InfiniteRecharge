@@ -9,9 +9,9 @@
 
 using namespace frc;
 using namespace wml;
-using ButtonMode = wml::controllers::Controller::ButtonMode;
+using namespace subsystems;
 
-double lastTimestamp;
+using ButtonMode = wml::controllers::Controller::ButtonMode;
 
 void Robot::RobotInit() {
   robotmap.updateGroup(); // update the internal timestamp - DON'T REGISTER BEFORE THIS

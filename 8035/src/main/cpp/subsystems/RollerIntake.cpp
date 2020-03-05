@@ -1,5 +1,7 @@
 #include "subsystems/RollerIntake.h"
 
+using namespace subsystems;
+
 void RollerIntake::IntakingPeriodic() {
   _config.motors.transmission->SetVoltage(12 * _config.intakingThrottle);
 }

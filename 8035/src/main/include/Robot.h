@@ -35,7 +35,7 @@ class Robot : public frc::TimedRobot, protected wml::StrategyController, protect
 
   wml::Drivetrain *drivetrain;
 
-  RollerIntake *intake;
+  subsystems::RollerIntake *intake;
 
   // intake
 
@@ -43,5 +43,5 @@ class Robot : public frc::TimedRobot, protected wml::StrategyController, protect
   bool shooterToggle = false;
 #endif
 
-  Climber *climber;
+  subsystems::Climber *climber;
 };
