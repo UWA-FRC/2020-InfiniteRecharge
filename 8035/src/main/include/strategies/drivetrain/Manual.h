@@ -21,6 +21,8 @@ namespace strategies {
       virtual void OnStart() override { OnChange(); };
       virtual void OnStop() override { OnChange(); };
 
+      virtual bool IsControlled(); // true if the controller is providing 'driving' input, false otherwise
+
      protected:
       virtual void OnChange() { _drivetrain->Set(0, 0); };
 
