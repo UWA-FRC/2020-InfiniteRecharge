@@ -3,5 +3,7 @@
 using namespace strategies::drivetrain;
 
 void Autoaim::OnUpdate(double dt) {
-  // WIP
+  double out = _controller.Calculate(_visionReceiver->GetHorizontalDegrees(), dt);
+
+  _drivetrain->Set(out, -out);
 }
