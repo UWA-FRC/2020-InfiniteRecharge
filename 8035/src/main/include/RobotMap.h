@@ -27,9 +27,9 @@ struct RobotMap {
 
   wml::controllers::SmartControllerGroup controllers{ xbox, xbox2 };
 
-  // frc::PowerDistributionPanel pdp{0};
-
   wml::loops::UpdateGroup updateGroup;
+
+  frc::PowerDistributionPanel pdp{0};
 
   struct DriveTrain {
     wml::VictorSpx left1{ 5 };

@@ -8,6 +8,7 @@
 
 #include "ControlMap.h"
 #include "strategies/intake/Manual.h"
+#include "strategies/intake/Eject.h"
 #include "RobotMap.h"
 #include "strategy/StrategyController.h"
 #include "NTProvider.h"

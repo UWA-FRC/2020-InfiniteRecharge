@@ -21,6 +21,9 @@ const tButtonList Intake::IN    = { { CODRIVER, XboxController::kA } };
 const tButtonList Intake::OUT   = { { CODRIVER, XboxController::kY } };
 const tButtonList Intake::STOW  = { { CODRIVER, XboxController::kX } };
 
+const double Intake::EJECT_CURRENT  = 60; // minicim stall is 80
+const double Intake::EJECT_DURATION = 3000;
+
 const double Intake::Throttles::INTAKING    = 0.8;
 const double Intake::Throttles::OUTTAKING   = 0.5;
 

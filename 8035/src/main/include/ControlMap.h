@@ -23,6 +23,9 @@ namespace ControlMap {
     extern const wml::controllers::tButtonList OUT;
     extern const wml::controllers::tButtonList STOW;
 
+    extern const double EJECT_CURRENT;
+    extern const double EJECT_DURATION;
+
     namespace Throttles {
       extern const double INTAKING;
       extern const double OUTTAKING;
