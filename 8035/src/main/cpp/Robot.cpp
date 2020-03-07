@@ -31,7 +31,9 @@ void Robot::RobotInit() {
 
   // Intake Setup
   intake = new RollerIntake(robotmap.intake.config);
-  /*StrategyController::Register(intake);*/ NTProvider::Register(intake); robotmap.updateGroup += intake;
+  intakeManualStrategy = std::make_shared<strategies::intake::Manual>(intake, &robotmap.controllers);
+  intake->SetDefault(intakeManualStrategy);
+  StrategyController::Register(intake); NTProvider::Register(intake);
 
   // Indexer Setup
   robotmap.indexer.indexerGearbox.transmission->SetInverted(true);
@@ -80,9 +82,8 @@ void Robot::TeleopPeriodic() {
 #endif
 
   // Intake Controlling
-  if      (robotmap.controllers.Get(ControlMap::Intake::IN))    intake->SetIntaking();
-  else if (robotmap.controllers.Get(ControlMap::Intake::OUT))   intake->SetOuttaking();
-  else if (robotmap.controllers.Get(ControlMap::Intake::STOW))  intake->SetStowed();
+  if (intake->GetActiveStrategy() == intakeManualStrategy && robotmap.pdp.GetCurrent(*intake->GetConfig().motors.transmission) > ControlMap::Intake::EJECT_CURRENT) {
+  }
 
   // Indexer Controlling
   robotmap.indexer.indexerGearbox.transmission->SetVoltage(

@@ -7,6 +7,7 @@
 #include <networktables/NetworkTableInstance.h>
 
 #include "ControlMap.h"
+#include "strategies/intake/Manual.h"
 #include "RobotMap.h"
 #include "strategy/StrategyController.h"
 #include "NTProvider.h"
@@ -36,6 +37,7 @@ class Robot : public frc::TimedRobot, protected wml::StrategyController, protect
   wml::Drivetrain *drivetrain;
 
   RollerIntake *intake;
+  std::shared_ptr<strategies::intake::Manual> intakeManualStrategy;
 
   // intake
 

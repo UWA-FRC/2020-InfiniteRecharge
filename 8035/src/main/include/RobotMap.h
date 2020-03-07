@@ -1,7 +1,5 @@
 #pragma once
 
-#include <frc/SpeedControllerGroup.h>
-#include <frc/Spark.h>
 #include <frc/PowerDistributionPanel.h>
 
 #include "WMLCtre.h"
