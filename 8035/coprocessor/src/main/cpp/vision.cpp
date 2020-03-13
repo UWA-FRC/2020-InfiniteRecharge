@@ -25,7 +25,7 @@ void vision_main() {
 #endif
 
   vision.SetupVision(&image, port, 60, Config::Vision::RES_HEIGHT, Config::Vision::RES_WIDTH, 1, "Shooter Cam", true);
-  vision.CustomTrack(&trackingImage, &image, 50, 70, 50, 255, 30, 255, 3, 1);
+  vision.CustomTrack(&trackingImage, &image, 50, 70, 250, 255, 30, 255, 3, 1);
 
   double cx, cy;
   vision.Processing.visionHullGeneration.BoundingBox(&trackingImage, &processingOutput, &cx, &cy, 10);

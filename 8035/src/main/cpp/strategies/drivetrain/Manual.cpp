@@ -15,11 +15,13 @@ void Manual::OnUpdate(double dt) {
     left * std::fabs(left) * ControlMap::Drivebase::THROTTLE,
     right * std::fabs(right) * ControlMap::Drivebase::THROTTLE
   );
+
+  _drivetrain->Update(dt);
 }
 
 bool Manual::IsControlled() {
-  if (_contGroup->Get(ControlMap::Drivebase::LEFT) > ControlMap::AXIS_DEADZONE) return true;
-  if (_contGroup->Get(ControlMap::Drivebase::RIGHT) > ControlMap::AXIS_DEADZONE) return true;
+  if (std::fabs(_contGroup->Get(ControlMap::Drivebase::LEFT)) > ControlMap::AXIS_DEADZONE) return true;
+  if (std::fabs(_contGroup->Get(ControlMap::Drivebase::RIGHT)) > ControlMap::AXIS_DEADZONE) return true;
 
   return false;
 }

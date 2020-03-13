@@ -44,7 +44,7 @@ void Robot::RobotInit() {
   robotmap.indexer.indexerGearbox.transmission->SetInverted(true);
 
   // Shooter Setup
-  robotmap.shooter.shooterGearbox.transmission->SetInverted(true);
+  // robotmap.shooter.shooterGearbox.transmission->SetInverted(true);
 
   // Climber Setup
   robotmap.climber.climberElevatorGearbox.transmission->SetInverted(true);
@@ -82,7 +82,13 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
   // Drivebase Controlling
-  // WIP - ADD AUTOAIM
+  if (drivetrainManualStrategy->IsControlled()) {
+    if (drivetrain->GetActiveStrategy() != drivetrainManualStrategy)
+      Schedule(drivetrainManualStrategy, true);
+  } else {
+    if (robotmap.controllers.Get(ControlMap::Shooter::AUTOAIM))
+      Schedule(std::make_shared<strategies::drivetrain::Autoaim>(drivetrain, &robotmap.controlSystem.vision, robotmap.shooter.autoAimGains));
+  }
 
   // Intake Controlling
   if      (robotmap.controllers.Get(ControlMap::Intake::IN))    intake->SetIntaking();

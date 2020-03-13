@@ -82,6 +82,8 @@ struct RobotMap {
     wml::TalonSrx shooter1{ 9 };
     wml::TalonSrx shooter2{ 10 };
 
+    wml::control::PIDGains autoAimGains{ "Auto Aim Gains", 0.01 };
+
 
     wml::actuators::MotorVoltageController shooterMotors = wml::actuators::MotorVoltageController::Group(shooter1, shooter2);
     wml::Gearbox shooterGearbox{ &shooterMotors, nullptr, 3 };
@@ -114,6 +116,6 @@ struct RobotMap {
 
   struct ControlSystem {
     // vision
-    wml::vision::Receiver vision();
+    wml::vision::Receiver vision{};
   }; ControlSystem controlSystem;
 };

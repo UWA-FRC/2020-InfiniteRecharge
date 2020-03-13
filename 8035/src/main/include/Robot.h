@@ -11,6 +11,7 @@
 
 #include "ControlMap.h"
 #include "RobotMap.h"
+#include "strategies/drivetrain/Autoaim.h"
 #include "strategies/drivetrain/Manual.h"
 
 class Robot : public frc::TimedRobot, protected wml::StrategyController, protected wml::NTProvider {
