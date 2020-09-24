@@ -82,7 +82,7 @@ struct RobotMap {
     wml::TalonSrx shooter1{ 9 };
     wml::TalonSrx shooter2{ 10 };
 
-    wml::control::PIDGains autoAimGains{ "Auto Aim Gains", 0.01 };
+    wml::control::PIDGains autoAimGains{ "Auto Aim Gains", 0.15 };
 
 
     wml::actuators::MotorVoltageController shooterMotors = wml::actuators::MotorVoltageController::Group(shooter1, shooter2);
